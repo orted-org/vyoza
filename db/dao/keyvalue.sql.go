@@ -23,12 +23,12 @@ func (q *Queries) AddKeyValue(ctx context.Context, arg KeyValue) (KeyValue, erro
 }
 
 const updateKeyValue = `
-UPDATE key_value_store SET value_data = ? WHERE key_data = ?
+UPDATE key_value_store SET value_data = ?, updated_at = ? WHERE key_data = ?
 RETURNING key_data, value_data, updated_at
 `
 
 func (q *Queries) UpdateKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error) {
-	row := q.queryRow(ctx, q.updateKeyValue, updateKeyValue, arg.Value, arg.Key, time.Now())
+	row := q.queryRow(ctx, q.updateKeyValue, updateKeyValue, arg.Value, time.Now(), arg.Key)
 	var i KeyValue
 	err := row.Scan(
 		&i.Key,

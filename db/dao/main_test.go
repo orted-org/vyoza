@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"os"
@@ -19,9 +20,14 @@ func TestMain(m *testing.M) {
 	var err error
 	tDB, err := sql.Open("sqlite3", dbSource)
 	if err != nil {
-		log.Fatal("could not connect to db")
+		log.Fatal(err)
+		return
 	}
-	tq = NewDB(tDB)
-
+	tq, err = Prepare(context.Background(), tDB)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer tq.Close()
 	os.Exit(m.Run())
 }
