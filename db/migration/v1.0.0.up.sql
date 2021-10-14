@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS key_value_store (
     value_data TEXT NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-CREATE TABLE IF NOT EXISTS uptime_watch_list(
+CREATE TABLE IF NOT EXISTS uptime_watch_request(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -12,6 +12,6 @@ CREATE TABLE IF NOT EXISTS uptime_watch_list(
     interval INTEGER NOT NULL,
     expected_status INTEGER NOT NULL,
     retain_duration TEXT,
-    hook_level TEXT,
+    hook_level INTEGER,
     hook_addr TEXT
 );
