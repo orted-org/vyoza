@@ -12,9 +12,10 @@ type KeyValue struct {
 	Location -> URL of the service
 	Enabled -> whether watch is enabled
 	EnableUpdatedAt -> timestamp of change in value of enabled
-	Interval -> watch time interval
+	Interval -> watch time interval(in seconds)
 	ExpectedStatus -> expected status code for the service to return
-	RetainDuration -> duration to retain the data in db
+	MaxResponeTime -> if status code matched and within this time, then considered success, otherwise warning
+	RetainDuration -> duration to retain the data in db (1h, 3d, etc)
 	HookLevel -> to make hook HTTP request at event 1(for only error), 2(for error and warning), 3(for success, warning and error)
 	HookAddress -> URL to make post hook request
 */
