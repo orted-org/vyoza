@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS uptime_watch_request(
     enable_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     interval INTEGER NOT NULL,
     expected_status INTEGER NOT NULL,
+    max_response_time INTEGER NOT NULL,
     retain_duration TEXT,
     hook_level INTEGER,
     hook_addr TEXT
