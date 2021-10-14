@@ -12,7 +12,7 @@ RETURNING key_data, value_data, updated_at
 `
 
 func (q *Queries) AddKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error) {
-	row := q.db.QueryRowContext(ctx, addKeyValue, arg.Key, arg.Value, time.Now())
+	row := q.queryRow(ctx, q.addKeyValue, addKeyValue, arg.Key, arg.Value, time.Now())
 	var i KeyValue
 	err := row.Scan(
 		&i.Key,
@@ -28,7 +28,7 @@ RETURNING key_data, value_data, updated_at
 `
 
 func (q *Queries) UpdateKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error) {
-	row := q.db.QueryRowContext(ctx, updateKeyValue, arg.Value, arg.Key, time.Now())
+	row := q.queryRow(ctx, q.updateKeyValue, updateKeyValue, arg.Value, arg.Key, time.Now())
 	var i KeyValue
 	err := row.Scan(
 		&i.Key,
@@ -44,7 +44,7 @@ WHERE key_data = ?
 `
 
 func (q *Queries) GetKeyValue(ctx context.Context, key string) (KeyValue, error) {
-	row := q.db.QueryRowContext(ctx, getKeyValue, key)
+	row := q.queryRow(ctx, q.getKeyValue, getKeyValue, key)
 	var i KeyValue
 	err := row.Scan(
 		&i.Key,
@@ -60,6 +60,6 @@ WHERE key_data = ?
 `
 
 func (q *Queries) DeleteKeyValue(ctx context.Context, key string) error {
-	_, err := q.db.ExecContext(ctx, deleteKeyValue, key)
+	_, err := q.exec(ctx, q.deleteKeyValue, deleteKeyValue, key)
 	return err
 }
