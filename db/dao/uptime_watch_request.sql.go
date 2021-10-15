@@ -109,3 +109,58 @@ func (q *Queries) GetUptimeWatchRequestByID(ctx context.Context, id int) (Uptime
 	)
 	return i, err
 }
+
+const getAllUptimeWatchRequest = `
+SELECT id,
+    title,
+    description,
+    location,
+    enabled,
+    enable_updated_at,
+    interval,
+    expected_status,
+    max_response_time,
+    retain_duration,
+    hook_level,
+    hook_addr,
+    hook_secret
+FROM uptime_watch_request
+`
+
+func (q *Queries) GetAllUptimeWatchRequest(ctx context.Context) ([]UptimeWatchRequest, error) {
+	rows, err := q.query(ctx, q.getAllUptimeWatchRequest, getAllUptimeWatchRequest)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UptimeWatchRequest
+	for rows.Next() {
+		var i UptimeWatchRequest
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.Location,
+			&i.Enabled,
+			&i.EnableUpdatedAt,
+			&i.Interval,
+			&i.ExpectedStatus,
+			&i.MaxResponseTime,
+			&i.RetainDuration,
+			&i.HookLevel,
+			&i.HookAddress,
+			&i.HookSecret,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
