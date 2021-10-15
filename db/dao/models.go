@@ -32,4 +32,5 @@ type UptimeWatchRequest struct {
 	RetainDuration  string    `json:"retain_duration"`
 	HookLevel       int       `json:"hook_level"`
 	HookAddress     string    `json:"hook_address"`
+	HookSecret      string
 }
