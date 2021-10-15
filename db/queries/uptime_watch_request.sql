@@ -59,3 +59,6 @@ SELECT id,
     hook_addr,
     hook_secret
 FROM uptime_watch_request;
+-- delete uptime watch by id
+DELETE FROM uptime_watch_request
+WHERE id = ?;

@@ -164,3 +164,12 @@ func (q *Queries) GetAllUptimeWatchRequest(ctx context.Context) ([]UptimeWatchRe
 	return items, nil
 }
 
+const deleteUptimeWatchRequestById = `
+DELETE FROM uptime_watch_request
+WHERE id = ?
+`
+
+func (q *Queries) DeleteUptimeWatchRequestById(ctx context.Context, id int) error {
+	_, err := q.exec(ctx, q.deleteUptimeWatchRequestById, deleteUptimeWatchRequestById, id)
+	return err
+}

@@ -41,6 +41,9 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.getAllUptimeWatchRequest, err = db.PrepareContext(ctx, getAllUptimeWatchRequest); err != nil {
 		return nil, fmt.Errorf("error preparing query getAllUptimeWatchRequest: %w", err)
 	}
+	if q.deleteUptimeWatchRequestById, err = db.PrepareContext(ctx, deleteUptimeWatchRequestById); err != nil {
+		return nil, fmt.Errorf("error preparing query getAllUptimeWatchRequest: %w", err)
+	}
 	return &q, nil
 }
 
@@ -81,6 +84,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getAllUptimeWatchRequest: %w", cerr)
 		}
 	}
+	if q.deleteUptimeWatchRequestById != nil {
+		if cerr := q.deleteUptimeWatchRequestById.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteUptimeWatchRequestById: %w", cerr)
+		}
+	}
 	return err
 }
 
@@ -112,12 +120,13 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                        DB
-	addKeyValue               *sql.Stmt
-	updateKeyValue            *sql.Stmt
-	getKeyValue               *sql.Stmt
-	deleteKeyValue            *sql.Stmt
-	addUptimeWatchRequest     *sql.Stmt
-	getUptimeWatchRequestByID *sql.Stmt
-	getAllUptimeWatchRequest  *sql.Stmt
+	db                           DB
+	addKeyValue                  *sql.Stmt
+	updateKeyValue               *sql.Stmt
+	getKeyValue                  *sql.Stmt
+	deleteKeyValue               *sql.Stmt
+	addUptimeWatchRequest        *sql.Stmt
+	getUptimeWatchRequestByID    *sql.Stmt
+	getAllUptimeWatchRequest     *sql.Stmt
+	deleteUptimeWatchRequestById *sql.Stmt
 }
