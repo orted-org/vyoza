@@ -91,7 +91,7 @@ WHERE id = ?
 `
 
 func (q *Queries) GetUptimeWatchRequestByID(ctx context.Context, id int) (UptimeWatchRequest, error) {
-	row := q.queryRow(ctx, q.addUptimeWatchRequest, getUptimeWatchRequestByID, id)
+	row := q.queryRow(ctx, q.getUptimeWatchRequestByID, getUptimeWatchRequestByID, id)
 	var i UptimeWatchRequest
 	err := row.Scan(
 		&i.ID,
