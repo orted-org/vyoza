@@ -6,7 +6,8 @@ RETURNING key_data,
     updated_at;
 -- update key value
 UPDATE key_value_store
-SET value_data = ?
+SET value_data = ?,
+    updated_at = ?
 WHERE key_data = ?
 RETURNING key_data,
     value_data,
