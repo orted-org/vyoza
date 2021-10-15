@@ -18,6 +18,7 @@ type KeyValue struct {
 	RetainDuration -> duration to retain the data in db (1h, 3d, etc)
 	HookLevel -> to make hook HTTP request at event 1(for only error), 2(for error and warning), 3(for success, warning and error)
 	HookAddress -> URL to make post hook request
+	HookSecret -> secret to send to the hook call to make safe hook call
 */
 type UptimeWatchRequest struct {
 	ID              int       `json:"id"`
