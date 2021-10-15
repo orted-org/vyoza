@@ -41,7 +41,6 @@ type AddUptimeWatchRequestParams struct {
 	Description     string
 	Location        string
 	Enabled         bool
-	EnableUpdatedAt time.Time
 	Interval        int
 	ExpectedStatus  int
 	MaxResponseTime int
