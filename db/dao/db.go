@@ -32,6 +32,18 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.deleteKeyValue, err = db.PrepareContext(ctx, deleteKeyValue); err != nil {
 		return nil, fmt.Errorf("error preparing query deleteKeyValue: %w", err)
 	}
+	if q.addUptimeResult, err = db.PrepareContext(ctx, addUptimeResult); err != nil {
+		return nil, fmt.Errorf("error preparing query addUptimeResult: %w", err)
+	}
+	if q.getUptimeResults, err = db.PrepareContext(ctx, getUptimeResults); err != nil {
+		return nil, fmt.Errorf("error preparing query getUptimeResults: %w", err)
+	}
+	if q.getUptimeResultCount, err = db.PrepareContext(ctx, getUptimeResultCount); err != nil {
+		return nil, fmt.Errorf("error preparing query getUptimeResultCount: %w", err)
+	}
+	if q.deleteUptimeResults, err = db.PrepareContext(ctx, deleteUptimeResults); err != nil {
+		return nil, fmt.Errorf("error preparing query deleteUptimeResults: %w", err)
+	}
 	return &q, nil
 }
 
@@ -55,6 +67,26 @@ func (q *Queries) Close() error {
 	if q.deleteKeyValue != nil {
 		if cerr := q.deleteKeyValue.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteKeyValue: %w", cerr)
+		}
+	}
+	if q.addUptimeResult != nil {
+		if cerr := q.addUptimeResult.Close(); cerr != nil {
+			err = fmt.Errorf("error closing addUptimeResult: %w", cerr)
+		}
+	}
+	if q.getUptimeResults != nil {
+		if cerr := q.getUptimeResults.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUptimeResults: %w", cerr)
+		}
+	}
+	if q.getUptimeResultCount != nil {
+		if cerr := q.getUptimeResultCount.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUptimeResultCount: %w", cerr)
+		}
+	}
+	if q.deleteUptimeResults != nil {
+		if cerr := q.deleteUptimeResults.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteUptimeResults: %w", cerr)
 		}
 	}
 	return err
@@ -88,9 +120,13 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db             DB
-	addKeyValue    *sql.Stmt
-	updateKeyValue *sql.Stmt
-	getKeyValue    *sql.Stmt
-	deleteKeyValue *sql.Stmt
+	db                   DB
+	addKeyValue          *sql.Stmt
+	updateKeyValue       *sql.Stmt
+	getKeyValue          *sql.Stmt
+	deleteKeyValue       *sql.Stmt
+	addUptimeResult      *sql.Stmt
+	getUptimeResultCount *sql.Stmt
+	getUptimeResults     *sql.Stmt
+	deleteUptimeResults  *sql.Stmt
 }

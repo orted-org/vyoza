@@ -33,3 +33,9 @@ type UptimeWatchRequest struct {
 	HookLevel       int       `json:"hook_level"`
 	HookAddress     string    `json:"hook_address"`
 }
+
+type UptimeResult struct {
+	ID           int       `json:"id"`
+	ResponseTime int       `json:"response_time"`
+	CreatedAt    time.Time `json:"created_at"`
+}
