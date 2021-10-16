@@ -44,7 +44,7 @@ type AddUptimeWatchRequestParams struct {
 	Interval        int
 	ExpectedStatus  int
 	MaxResponseTime int
-	RetainDuration  string
+	RetainDuration  int
 	HookLevel       int
 	HookAddress     string
 	HookSecret      string
