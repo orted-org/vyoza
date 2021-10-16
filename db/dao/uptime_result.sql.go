@@ -54,11 +54,11 @@ LIMIT ? OFFSET ?
 type GetUptimeResultsParams struct {
 	ID     int
 	Limit  int
-	OFFSET int
+	Offset int
 }
 
 func (q *Queries) GetUptimeResults(ctx context.Context, arg GetUptimeResultsParams) ([]UptimeResult, error) {
-	rows, err := q.query(ctx, q.getUptimeResults, getUptimeResults, arg.ID, arg.Limit, arg.OFFSET)
+	rows, err := q.query(ctx, q.getUptimeResults, getUptimeResults, arg.ID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
