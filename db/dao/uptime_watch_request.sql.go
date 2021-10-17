@@ -192,6 +192,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		retain_duration,
 		hook_level,
 		hook_addr
+		hook_secret
 	`
 	qry, err := CreateDynamicUpdateQuery(updateData, map[string]string{
 		"title":             "string",
@@ -205,6 +206,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		"retain_duration":   "int",
 		"hook_level":        "int",
 		"hook_addr":         "string",
+		"hook_secret":       "string",
 	}, "uptime_watch_request", closing)
 
 	if err != nil {
