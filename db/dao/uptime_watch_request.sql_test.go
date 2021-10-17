@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	// "log"
+
 	"sort"
 	"testing"
 	"time"
@@ -15,21 +15,20 @@ import (
 
 func createRandomUptimeWatchRequest(t *testing.T) UptimeWatchRequest {
 	arg := AddUptimeWatchRequestParams{
-		Title: util.RandomString(5),
-		Description: util.RandomString(10),
-		Location: util.RandomString(10),
-		Enabled: util.RandomBool(),
-		Interval:util.RandomInt(20, 60),
-		ExpectedStatus: util.RandomInt(100, 600),
+		Title:           util.RandomString(5),
+		Description:     util.RandomString(10),
+		Location:        util.RandomString(10),
+		Enabled:         util.RandomBool(),
+		Interval:        util.RandomInt(20, 60),
+		ExpectedStatus:  util.RandomInt(100, 600),
 		MaxResponseTime: util.RandomInt(10, 20),
-		RetainDuration: util.RandomInt(1000,2000),
-		HookLevel: util.RandomInt(1, 3),
-		HookAddress: util.RandomString(10),
-		HookSecret: string(util.NewSHA256([]byte(util.RandomString(20)))),
+		RetainDuration:  util.RandomInt(1000, 2000),
+		HookLevel:       util.RandomInt(1, 3),
+		HookAddress:     util.RandomString(10),
+		HookSecret:      string(util.NewSHA256([]byte(util.RandomString(20)))),
 	}
-	
 
-	uwr, err := tq.AddUptimeWatchRequest(context.Background(),arg)
+	uwr, err := tq.AddUptimeWatchRequest(context.Background(), arg)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, uwr)
@@ -52,22 +51,21 @@ func createRandomUptimeWatchRequest(t *testing.T) UptimeWatchRequest {
 	require.Equal(t, arg.HookAddress, uwr.HookAddress)
 	require.Equal(t, arg.HookSecret, uwr.HookSecret)
 
-	return uwr;
+	return uwr
 }
 
-func deletingTheTestingData(t *testing.T ,ID int){
+func deletingTheTestingData(t *testing.T, ID int) {
 	err := tq.DeleteUptimeWatchRequestById(context.Background(), ID)
 	require.NoError(t, err)
 }
 
-func TestAddUptimeWatchRequest(t *testing.T){
+func TestAddUptimeWatchRequest(t *testing.T) {
 	uwr := createRandomUptimeWatchRequest(t)
-	deletingTheTestingData(t, uwr.ID);
+	deletingTheTestingData(t, uwr.ID)
 }
 
-
-func TestGetUptimeWatchRequestByID(t *testing.T){
-	uwr := createRandomUptimeWatchRequest(t);
+func TestGetUptimeWatchRequestByID(t *testing.T) {
+	uwr := createRandomUptimeWatchRequest(t)
 
 	incomingUWR, err := tq.GetUptimeWatchRequestByID(context.Background(), uwr.ID)
 
@@ -92,41 +90,41 @@ func TestGetUptimeWatchRequestByID(t *testing.T){
 	require.Equal(t, uwr.HookAddress, incomingUWR.HookAddress)
 	require.Equal(t, uwr.HookSecret, incomingUWR.HookSecret)
 
-	deletingTheTestingData(t, incomingUWR.ID);
+	deletingTheTestingData(t, incomingUWR.ID)
 }
 
-func TestDeleteUptimeWatchRequestById(t *testing.T){
-	uwr := createRandomUptimeWatchRequest(t);
+func TestDeleteUptimeWatchRequestById(t *testing.T) {
+	uwr := createRandomUptimeWatchRequest(t)
 
-	err := tq.DeleteUptimeWatchRequestById(context.Background(),uwr.ID)
+	err := tq.DeleteUptimeWatchRequestById(context.Background(), uwr.ID)
 	require.NoError(t, err)
 
 	//checking incomingUWR for being empty of uwr.ID
 
-	incomingUWR, err := tq.GetUptimeWatchRequestByID(context.Background(),uwr.ID)
-	require.Error(t, err);
+	incomingUWR, err := tq.GetUptimeWatchRequestByID(context.Background(), uwr.ID)
+	require.Error(t, err)
 	require.Empty(t, incomingUWR)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 }
 
 /*
 	1. create 10 requests, Sort them according to there id
-	2. Get all the rows from db, sort them also according to there id (there 
+	2. Get all the rows from db, sort them also according to there id (there
 	should be no rows, expected created above i table)
 	3. start comparing
 */
-func TestGetAllUptimeWatchRequest(t *testing.T){
+func TestGetAllUptimeWatchRequest(t *testing.T) {
 	UWRNumber := 10
-	var allUWR []UptimeWatchRequest;
-	for i := 0; i <UWRNumber; i++ {
-		createdUWR := createRandomUptimeWatchRequest(t);
+	var allUWR []UptimeWatchRequest
+	for i := 0; i < UWRNumber; i++ {
+		createdUWR := createRandomUptimeWatchRequest(t)
 		allUWR = append(allUWR, createdUWR)
 	}
 	sort.Slice(allUWR, func(i, j int) bool {
 		return allUWR[i].ID < allUWR[j].ID
 	})
 
-	incomingAllUWR,err := tq.GetAllUptimeWatchRequest(context.Background()) 
+	incomingAllUWR, err := tq.GetAllUptimeWatchRequest(context.Background())
 
 	require.NoError(t, err)
 	require.NotEmpty(t, incomingAllUWR)
@@ -134,10 +132,10 @@ func TestGetAllUptimeWatchRequest(t *testing.T){
 		return incomingAllUWR[i].ID < incomingAllUWR[j].ID
 	})
 
-	for i:= 0 ; i <UWRNumber ; i++ {
+	for i := 0; i < UWRNumber; i++ {
 		t.Run(fmt.Sprintf("Subtest Number: %v", i+1), func(t *testing.T) {
 			//must be a row in incomingAllUWR, corresponding to a row in allUWR
-			require.NotEmpty(t, incomingAllUWR[i]);
+			require.NotEmpty(t, incomingAllUWR[i])
 
 			require.NotZero(t, incomingAllUWR[i].ID)
 			require.NotZero(t, incomingAllUWR[i].EnableUpdatedAt)
@@ -160,7 +158,7 @@ func TestGetAllUptimeWatchRequest(t *testing.T){
 
 	//deleting all the created data used in testing
 	for _, v := range allUWR {
-		deletingTheTestingData(t, v.ID);
+		deletingTheTestingData(t, v.ID)
 	}
 
 }
