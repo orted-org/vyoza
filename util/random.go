@@ -12,8 +12,8 @@ func init() {
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
-func RandomInt(min, max int64) int64 {
-	return rand.Int63n(max - min + 1)
+func RandomInt(min, max int64) int {
+	return int(min + rand.Int63n(max - min + 1))
 }
 
 func RandomString(size int) string {
@@ -23,4 +23,13 @@ func RandomString(size int) string {
 		sb.WriteByte(alphabet[rand.Intn(k)])
 	}
 	return sb.String()
+}
+
+func RandomBool() bool {
+	num := rand.Int63n(2);
+	if num ==0 {
+		return false
+	} else {
+		return true;
+	}
 }
