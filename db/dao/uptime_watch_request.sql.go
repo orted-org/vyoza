@@ -173,3 +173,56 @@ func (q *Queries) DeleteUptimeWatchRequestById(ctx context.Context, id int) erro
 	_, err := q.exec(ctx, q.deleteUptimeWatchRequestById, deleteUptimeWatchRequestById, id)
 	return err
 }
+
+func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData map[string]interface{}, id int) (UptimeWatchRequest, error) {
+	var i UptimeWatchRequest
+	closing := `
+	WHERE id = ? 
+	RETURNING   
+		id,
+		title,
+		description,
+		location,
+		enabled,
+		enable_updated_at,
+		interval,
+		expected_status,
+		max_response_time,
+		retain_duration,
+		hook_level,
+		hook_addr
+	`
+	qry, err := CreateDynamicUpdateQuery(updateData, map[string]string{
+		"title":             "string",
+		"description":       "string",
+		"location":          "string",
+		"enabled":           "bool",
+		"enable_updated_at": "time.Time",
+		"interval":          "int",
+		"expected_status":   "int",
+		"max_response_time": "int",
+		"retain_duration":   "int",
+		"hook_level":        "int",
+		"hook_addr":         "string",
+	}, "uptime_watch_request", closing)
+	if err != nil {
+		return i, err
+	}
+
+	row := q.db.QueryRowContext(ctx, qry, id)
+	err = row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.Location,
+		&i.Enabled,
+		&i.EnableUpdatedAt,
+		&i.Interval,
+		&i.ExpectedStatus,
+		&i.MaxResponseTime,
+		&i.RetainDuration,
+		&i.HookLevel,
+		&i.HookAddress,
+	)
+	return i, err
+}
