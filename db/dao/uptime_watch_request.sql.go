@@ -178,6 +178,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 	var i UptimeWatchRequest
 	closing := `
 	WHERE id = ? 
+	LIMIT 1
 	RETURNING   
 		id,
 		title,
