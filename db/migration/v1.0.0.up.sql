@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS uptime_watch_request(
     interval INTEGER NOT NULL,
     expected_status INTEGER NOT NULL,
     max_response_time INTEGER NOT NULL,
-    retain_duration TEXT NOT NULL,
+    retain_duration INTEGER NOT NULL,
     hook_level INTEGER NOT NULL,
-    hook_addr TEXT NOT NULL
+    hook_addr TEXT NOT NULL,
+    hook_secret TEXT NOT NULL
 );
