@@ -21,11 +21,13 @@ func CreateDynamicUpdateQuery(incomingMap map[string]interface{}, allowedFields 
 		if dataType != "" {
 			if i != 0 {
 				sb.WriteString(", ")
+			} else {
+				sb.WriteString("SET ")
 			}
 			if dataType == "string" {
-				sb.WriteString(fmt.Sprintf("SET %s = '%v'", k, v))
+				sb.WriteString(fmt.Sprintf("%s = '%v'", k, v))
 			} else {
-				sb.WriteString(fmt.Sprintf("SET %s = %v", k, v))
+				sb.WriteString(fmt.Sprintf("%s = %v", k, v))
 			}
 		}
 		i++
@@ -41,7 +43,10 @@ func isAllowedType(field string, data interface{}, allowedFields map[string]stri
 			if dataType == v {
 				return dataType, nil
 			} else {
-				return "", errors.New("datatype mismatch")
+				if v == "custom" {
+					return "custom", nil
+				}
+				return "", fmt.Errorf("datatype mismatch for %v, expected %v, got %v", k, v, dataType)
 			}
 		}
 	}

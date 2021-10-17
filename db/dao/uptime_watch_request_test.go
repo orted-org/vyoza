@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	"sort"
 	"testing"
 	"time"
 
@@ -120,39 +119,38 @@ func TestGetAllUptimeWatchRequest(t *testing.T) {
 		createdUWR := createRandomUptimeWatchRequest(t)
 		allUWR = append(allUWR, createdUWR)
 	}
-	sort.Slice(allUWR, func(i, j int) bool {
-		return allUWR[i].ID < allUWR[j].ID
-	})
 
 	incomingAllUWR, err := tq.GetAllUptimeWatchRequest(context.Background())
 
 	require.NoError(t, err)
 	require.NotEmpty(t, incomingAllUWR)
-	sort.Slice(incomingAllUWR, func(i, j int) bool {
-		return incomingAllUWR[i].ID < incomingAllUWR[j].ID
-	})
 
-	for i := 0; i < UWRNumber; i++ {
-		t.Run(fmt.Sprintf("Subtest Number: %v", i+1), func(t *testing.T) {
+	for k, oneFromCreated := range allUWR {
+		t.Run(fmt.Sprintf("Subtest Number: %v", k+1), func(t *testing.T) {
 			//must be a row in incomingAllUWR, corresponding to a row in allUWR
-			require.NotEmpty(t, incomingAllUWR[i])
-
-			require.NotZero(t, incomingAllUWR[i].ID)
-			require.NotZero(t, incomingAllUWR[i].EnableUpdatedAt)
+			var i UptimeWatchRequest
+			for _, oneFromAll := range incomingAllUWR {
+				if oneFromCreated.ID == oneFromAll.ID {
+					i = oneFromAll
+				}
+			}
+			require.NotEmpty(t, i)
+			require.NotZero(t, i.ID)
+			require.NotZero(t, i.EnableUpdatedAt)
 
 			//comparing with created data with incoming data
-			require.Equal(t, allUWR[i].Title, incomingAllUWR[i].Title)
-			require.Equal(t, allUWR[i].Description, incomingAllUWR[i].Description)
-			require.Equal(t, allUWR[i].Location, incomingAllUWR[i].Location)
-			require.Equal(t, allUWR[i].Enabled, incomingAllUWR[i].Enabled)
-			require.WithinDuration(t, time.Now(), incomingAllUWR[i].EnableUpdatedAt, time.Second)
-			require.Equal(t, allUWR[i].Interval, incomingAllUWR[i].Interval)
-			require.Equal(t, allUWR[i].ExpectedStatus, incomingAllUWR[i].ExpectedStatus)
-			require.Equal(t, allUWR[i].MaxResponseTime, incomingAllUWR[i].MaxResponseTime)
-			require.Equal(t, allUWR[i].RetainDuration, incomingAllUWR[i].RetainDuration)
-			require.Equal(t, allUWR[i].HookLevel, incomingAllUWR[i].HookLevel)
-			require.Equal(t, allUWR[i].HookAddress, incomingAllUWR[i].HookAddress)
-			require.Equal(t, allUWR[i].HookSecret, incomingAllUWR[i].HookSecret)
+			require.Equal(t, oneFromCreated.Title, i.Title)
+			require.Equal(t, oneFromCreated.Description, i.Description)
+			require.Equal(t, oneFromCreated.Location, i.Location)
+			require.Equal(t, oneFromCreated.Enabled, i.Enabled)
+			require.WithinDuration(t, time.Now(), i.EnableUpdatedAt, time.Second)
+			require.Equal(t, oneFromCreated.Interval, i.Interval)
+			require.Equal(t, oneFromCreated.ExpectedStatus, i.ExpectedStatus)
+			require.Equal(t, oneFromCreated.MaxResponseTime, i.MaxResponseTime)
+			require.Equal(t, oneFromCreated.RetainDuration, i.RetainDuration)
+			require.Equal(t, oneFromCreated.HookLevel, i.HookLevel)
+			require.Equal(t, oneFromCreated.HookAddress, i.HookAddress)
+			require.Equal(t, oneFromCreated.HookSecret, i.HookSecret)
 		})
 	}
 
@@ -160,5 +158,28 @@ func TestGetAllUptimeWatchRequest(t *testing.T) {
 	for _, v := range allUWR {
 		deletingTheTestingData(t, v.ID)
 	}
+
+}
+
+func TestUpdateUptimeWatchRequestById(t *testing.T) {
+	i := createRandomUptimeWatchRequest(t)
+	updates := make(map[string]interface{})
+	arg := UptimeWatchRequest{
+		Title:       util.RandomString(10),
+		Description: util.RandomString(40),
+		HookLevel:   util.RandomInt(1, 3),
+	}
+	updates["title"] = arg.Title
+	updates["description"] = arg.Description
+	updates["hook_level"] = arg.HookLevel
+
+	updated, err := tq.UpdateUptimeWatchRequestById(context.Background(), updates, i.ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, updated)
+
+	require.Equal(t, updated.Title, arg.Title)
+	require.Equal(t, updated.Description, arg.Description)
+	require.Equal(t, updated.HookLevel, arg.HookLevel)
+	deletingTheTestingData(t, i.ID)
 
 }

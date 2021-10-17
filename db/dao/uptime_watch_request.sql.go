@@ -176,9 +176,9 @@ func (q *Queries) DeleteUptimeWatchRequestById(ctx context.Context, id int) erro
 
 func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData map[string]interface{}, id int) (UptimeWatchRequest, error) {
 	var i UptimeWatchRequest
+	updateData["enable_updated_at"] = "?"
 	closing := `
-	WHERE id = ? 
-	LIMIT 1
+	WHERE id = ?
 	RETURNING   
 		id,
 		title,
@@ -198,7 +198,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		"description":       "string",
 		"location":          "string",
 		"enabled":           "bool",
-		"enable_updated_at": "time.Time",
+		"enable_updated_at": "custom",
 		"interval":          "int",
 		"expected_status":   "int",
 		"max_response_time": "int",
@@ -206,11 +206,12 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		"hook_level":        "int",
 		"hook_addr":         "string",
 	}, "uptime_watch_request", closing)
+
 	if err != nil {
 		return i, err
 	}
 
-	row := q.db.QueryRowContext(ctx, qry, id)
+	row := q.db.QueryRowContext(ctx, qry, time.Now(), id)
 	err = row.Scan(
 		&i.ID,
 		&i.Title,
