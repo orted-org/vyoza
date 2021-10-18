@@ -29,7 +29,7 @@ func (q *Queries) AddUptimeResult(ctx context.Context, arg AddUptimeResultParams
 }
 
 const getUptimeResultCount = `
-SELECT count(*)
+SELECT count(*) FROM uptime_result
 WHERE id = ?
 `
 

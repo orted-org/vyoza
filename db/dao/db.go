@@ -43,6 +43,7 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	}
 	if q.deleteUptimeWatchRequestById, err = db.PrepareContext(ctx, deleteUptimeWatchRequestById); err != nil {
 		return nil, fmt.Errorf("error preparing query getAllUptimeWatchRequest: %w", err)
+	}
 	if q.addUptimeResult, err = db.PrepareContext(ctx, addUptimeResult); err != nil {
 		return nil, fmt.Errorf("error preparing query addUptimeResult: %w", err)
 	}
@@ -98,6 +99,8 @@ func (q *Queries) Close() error {
 	if q.deleteUptimeWatchRequestById != nil {
 		if cerr := q.deleteUptimeWatchRequestById.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteUptimeWatchRequestById: %w", cerr)
+		}
+	}
 	if q.addUptimeResult != nil {
 		if cerr := q.addUptimeResult.Close(); cerr != nil {
 			err = fmt.Errorf("error closing addUptimeResult: %w", cerr)
@@ -158,8 +161,8 @@ type Queries struct {
 	getUptimeWatchRequestByID    *sql.Stmt
 	getAllUptimeWatchRequest     *sql.Stmt
 	deleteUptimeWatchRequestById *sql.Stmt
-	addUptimeResult      *sql.Stmt
-	getUptimeResultCount *sql.Stmt
-	getUptimeResults     *sql.Stmt
-	deleteUptimeResults  *sql.Stmt
+	addUptimeResult              *sql.Stmt
+	getUptimeResultCount         *sql.Stmt
+	getUptimeResults             *sql.Stmt
+	deleteUptimeResults          *sql.Stmt
 }
