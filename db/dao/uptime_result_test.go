@@ -37,3 +37,45 @@ func TestGetUptimeResultCount(t *testing.T) {
 	require.NotEmpty(t, c)
 	require.NotZero(t, c)
 }
+
+func TestGetUptimeResults(t *testing.T) {
+	n := 10
+	var allUR []UptimeResult
+	var savedRes []UptimeResult
+	var avgCreated = 0
+	var avgSaved = 0
+	uwr := createRandomUptimeWatchRequest(t)
+	for i := 0; i < n; i++ {
+		arg := AddUptimeResultParams{
+			ID:           uwr.ID,
+			ResponseTime: util.RandomInt(1, 10),
+		}
+		res, err := tq.AddUptimeResult(context.Background(), arg)
+		require.NoError(t, err)
+		require.NotEmpty(t, res)
+		allUR = append(allUR, res)
+		avgCreated = avgCreated + res.ResponseTime
+	}
+
+	i := 0
+	for {
+		res, err := tq.GetUptimeResults(context.Background(), GetUptimeResultsParams{
+			ID:     uwr.ID,
+			Offset: i * 2,
+			Limit:  2,
+		})
+		require.NoError(t, err)
+		if len(res) == 0 {
+			break
+		}
+		savedRes = append(savedRes, res...)
+		for _, inv := range res {
+			avgSaved = avgSaved + inv.ResponseTime
+		}
+		i++
+	}
+
+	require.Len(t, savedRes, len(allUR))
+	require.Equal(t, avgSaved/n, avgCreated/n)
+
+}
