@@ -14,26 +14,28 @@ INSERT INTO uptime_watch_request (
 	enable_updated_at,
 	interval,
 	expected_status,
+	std_response_time,
 	max_response_time,
 	retain_duration,
 	hook_level,
 	hook_addr,
 	hook_secret
 )
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-RETURNING   id,
-			title,
-			description,
-			location,
-			enabled,
-			enable_updated_at,
-			interval,
-			expected_status,
-			max_response_time,
-			retain_duration,
-			hook_level,
-			hook_addr,
-			hook_secret
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	RETURNING id,
+	title,
+	description,
+	location,
+	enabled,
+	enable_updated_at,
+	interval,
+	expected_status,
+	std_response_time,
+	max_response_time,
+	retain_duration,
+	hook_level,
+	hook_addr,
+	hook_secret
 `
 
 type AddUptimeWatchRequestParams struct {
@@ -43,6 +45,7 @@ type AddUptimeWatchRequestParams struct {
 	Enabled         bool
 	Interval        int
 	ExpectedStatus  int
+	StdResponseTime int
 	MaxResponseTime int
 	RetainDuration  int
 	HookLevel       int
@@ -51,7 +54,7 @@ type AddUptimeWatchRequestParams struct {
 }
 
 func (q *Queries) AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchRequestParams) (UptimeWatchRequest, error) {
-	row := q.queryRow(ctx, q.addUptimeWatchRequest, addUptimeWatchRequest, arg.Title, arg.Description, arg.Location, arg.Enabled, time.Now(), arg.Interval, arg.ExpectedStatus, arg.MaxResponseTime, arg.RetainDuration, arg.HookLevel, arg.HookAddress, arg.HookSecret)
+	row := q.queryRow(ctx, q.addUptimeWatchRequest, addUptimeWatchRequest, arg.Title, arg.Description, arg.Location, arg.Enabled, time.Now(), arg.Interval, arg.ExpectedStatus, arg.StdResponseTime, arg.MaxResponseTime, arg.RetainDuration, arg.HookLevel, arg.HookAddress, arg.HookSecret)
 	var i UptimeWatchRequest
 	err := row.Scan(
 		&i.ID,
@@ -62,6 +65,7 @@ func (q *Queries) AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchR
 		&i.EnableUpdatedAt,
 		&i.Interval,
 		&i.ExpectedStatus,
+		&i.StdResponseTime,
 		&i.MaxResponseTime,
 		&i.RetainDuration,
 		&i.HookLevel,
@@ -80,6 +84,7 @@ SELECT id,
     enable_updated_at,
     interval,
     expected_status,
+    std_response_time,
     max_response_time,
     retain_duration,
     hook_level,
@@ -101,6 +106,7 @@ func (q *Queries) GetUptimeWatchRequestByID(ctx context.Context, id int) (Uptime
 		&i.EnableUpdatedAt,
 		&i.Interval,
 		&i.ExpectedStatus,
+		&i.StdResponseTime,
 		&i.MaxResponseTime,
 		&i.RetainDuration,
 		&i.HookLevel,
@@ -119,6 +125,7 @@ SELECT id,
     enable_updated_at,
     interval,
     expected_status,
+    std_response_time,
     max_response_time,
     retain_duration,
     hook_level,
@@ -145,6 +152,7 @@ func (q *Queries) GetAllUptimeWatchRequest(ctx context.Context) ([]UptimeWatchRe
 			&i.EnableUpdatedAt,
 			&i.Interval,
 			&i.ExpectedStatus,
+			&i.StdResponseTime,
 			&i.MaxResponseTime,
 			&i.RetainDuration,
 			&i.HookLevel,
@@ -188,6 +196,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		enable_updated_at,
 		interval,
 		expected_status,
+		std_response_time,
 		max_response_time,
 		retain_duration,
 		hook_level,
@@ -202,6 +211,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		"enable_updated_at": "custom",
 		"interval":          "int",
 		"expected_status":   "int",
+		"std_response_time": "int",
 		"max_response_time": "int",
 		"retain_duration":   "int",
 		"hook_level":        "int",
@@ -223,6 +233,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		&i.EnableUpdatedAt,
 		&i.Interval,
 		&i.ExpectedStatus,
+		&i.StdResponseTime,
 		&i.MaxResponseTime,
 		&i.RetainDuration,
 		&i.HookLevel,
