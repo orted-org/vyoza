@@ -29,6 +29,7 @@ type UptimeWatchRequest struct {
 	EnableUpdatedAt time.Time `json:"enable_updated_at"`
 	Interval        int       `json:"interval"`
 	ExpectedStatus  int       `json:"expected_status"`
+	StdResponseTime int       `json:"std_response_time"`
 	MaxResponseTime int       `json:"max_response_time"`
 	RetainDuration  int       `json:"retain_duration"`
 	HookLevel       int       `json:"hook_level"`
