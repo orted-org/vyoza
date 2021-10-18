@@ -37,16 +37,26 @@ SELECT uptime_result.id,
     ) AS error_count,
     min(response_time) AS min_response_time,
     max(response_time) AS max_response_time,
-    avg(
-        CASE
-            WHEN response_time <= uptime_watch_request.std_response_time THEN response_time
-        END
+    CAST(
+        IFNULL(
+            avg(
+                CASE
+                    WHEN response_time <= uptime_watch_request.std_response_time THEN response_time
+                END
+            ),
+            0
+        ) AS INTEGER
     ) AS avg_success_resp_time,
-    avg(
-        CASE
-            WHEN response_time > uptime_watch_request.std_response_time
-            AND response_time <= uptime_watch_request.max_response_time THEN response_time
-        END
+    CAST(
+        IFNULL(
+            avg(
+                CASE
+                    WHEN response_time > uptime_watch_request.std_response_time
+                    AND response_time <= uptime_watch_request.max_response_time THEN response_time
+                END
+            ),
+            0
+        ) AS INTEGER
     ) AS avg_warning_resp_time,
     min(created_at) AS start_date,
     max(created_at) AS end_date

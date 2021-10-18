@@ -2,6 +2,9 @@ package db
 
 import (
 	"context"
+	"log"
+	"strings"
+	"time"
 )
 
 const addUptimeResult = `
@@ -114,16 +117,26 @@ SELECT uptime_result.id,
     ) AS error_count,
     min(response_time) AS min_response_time,
     max(response_time) AS max_response_time,
-    avg(
-        CASE
-            WHEN response_time <= uptime_watch_request.std_response_time THEN response_time
-        END
+    CAST(
+        IFNULL(
+            avg(
+                CASE
+                    WHEN response_time <= uptime_watch_request.std_response_time THEN response_time
+                END
+            ),
+            0
+        ) AS INTEGER
     ) AS avg_success_resp_time,
-    avg(
-        CASE
-            WHEN response_time > uptime_watch_request.std_response_time
-            AND response_time <= uptime_watch_request.max_response_time THEN response_time
-        END
+    CAST(
+        IFNULL(
+            avg(
+                CASE
+                    WHEN response_time > uptime_watch_request.std_response_time
+                    AND response_time <= uptime_watch_request.max_response_time THEN response_time
+                END
+            ),
+            0
+        ) AS INTEGER
     ) AS avg_warning_resp_time,
     min(created_at) AS start_date,
     max(created_at) AS end_date
@@ -135,6 +148,8 @@ WHERE uptime_watch_request.id = ?
 func (q *Queries) GetUptimeResultStatsForID(ctx context.Context, id int) (UptimeResultStats, error) {
 	row := q.queryRow(ctx, q.getUptimeResultStatsForID, getUptimeResultStatsForID, id)
 	var i UptimeResultStats
+	var startDate string
+	var endDate string
 	err := row.Scan(
 		&i.ID,
 		&i.SuccessCount,
@@ -144,8 +159,18 @@ func (q *Queries) GetUptimeResultStatsForID(ctx context.Context, id int) (Uptime
 		&i.MaxResponseTime,
 		&i.AvgSuccessResponseTime,
 		&i.AvgWarningResponseTime,
-		&i.StartDate,
-		&i.EndDate,
+		&startDate,
+		&endDate,
 	)
+	startDate = strings.ReplaceAll(startDate, " ", "T") + ".000Z"
+	endDate = strings.ReplaceAll(endDate, " ", "T") + ".000Z"
+	lay := "2006-01-02T15:04:05.000Z"
+
+	i.StartDate, _ = time.Parse(lay, startDate)
+	if err != nil {
+		log.Println(err)
+	}
+	i.EndDate, _ = time.Parse(lay, endDate)
+
 	return i, err
 }

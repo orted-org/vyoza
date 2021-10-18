@@ -20,6 +20,7 @@ func createRandomUptimeWatchRequest(t *testing.T) UptimeWatchRequest {
 		Enabled:         util.RandomBool(),
 		Interval:        util.RandomInt(20, 60),
 		ExpectedStatus:  util.RandomInt(100, 600),
+		StdResponseTime: util.RandomInt(5, 10),
 		MaxResponseTime: util.RandomInt(10, 20),
 		RetainDuration:  util.RandomInt(1000, 2000),
 		HookLevel:       util.RandomInt(1, 3),
