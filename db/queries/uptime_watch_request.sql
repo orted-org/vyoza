@@ -65,4 +65,3 @@ FROM uptime_watch_request;
 -- delete uptime watch by id
 DELETE FROM uptime_watch_request
 WHERE id = ?;
-DELETE FROM uptime_watch_request
