@@ -132,3 +132,22 @@ FROM uptime_result
     INNER JOIN uptime_watch_request ON uptime_watch_request.id = uptime_result.id
 WHERE uptime_watch_request.id = ?
 `
+
+func (q *Queries) GetUptimeResultStatsForID(ctx context.Context, id int) (UptimeResultStats, error) {
+	row := q.queryRow(ctx, q.getUptimeResultStatsForID, getUptimeResultStatsForID, id)
+	var i UptimeResultStats
+	err := row.Scan(
+		&i.ID,
+		&i.TotalCount,
+		&i.SuccessCount,
+		&i.WarningCount,
+		&i.ErrorCount,
+		&i.MinResponseTime,
+		&i.MaxResponseTime,
+		&i.AvgSuccessResponseTime,
+		&i.AvgWarningResponseTime,
+		&i.StartDate,
+		&i.EndDate,
+	)
+	return i, err
+}
