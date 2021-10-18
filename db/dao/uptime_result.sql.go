@@ -96,7 +96,6 @@ func (q *Queries) DeleteUptimeResults(ctx context.Context, id int) error {
 
 const getUptimeResultStatsForID = `
 SELECT uptime_result.id,
-    count(*) AS total_count,
     count(
         CASE
             WHEN response_time <= uptime_watch_request.std_response_time THEN response_time
@@ -138,7 +137,6 @@ func (q *Queries) GetUptimeResultStatsForID(ctx context.Context, id int) (Uptime
 	var i UptimeResultStats
 	err := row.Scan(
 		&i.ID,
-		&i.TotalCount,
 		&i.SuccessCount,
 		&i.WarningCount,
 		&i.ErrorCount,

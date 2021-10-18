@@ -45,7 +45,6 @@ type UptimeResult struct {
 
 type UptimeResultStats struct {
 	ID                     int       `json:"id"`
-	TotalCount             int       `json:"total_count"`
 	SuccessCount           int       `json:"success_count"`
 	WarningCount           int       `json:"warning_count"`
 	ErrorCount             int       `json:"error_count"`

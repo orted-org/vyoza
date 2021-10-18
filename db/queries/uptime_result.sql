@@ -19,7 +19,6 @@ DELETE FROM uptime_result
 WHERE id = ?;
 -- get stats for an id
 SELECT uptime_result.id,
-    count(*) AS total_count,
     count(
         CASE
             WHEN response_time <= uptime_watch_request.std_response_time THEN response_time
