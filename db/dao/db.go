@@ -56,6 +56,9 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.deleteUptimeResults, err = db.PrepareContext(ctx, deleteUptimeResults); err != nil {
 		return nil, fmt.Errorf("error preparing query deleteUptimeResults: %w", err)
 	}
+	if q.getUptimeResultStatsForID, err = db.PrepareContext(ctx, getUptimeResultStatsForID); err != nil {
+		return nil, fmt.Errorf("error preparing query getUptimeResultStatsForID: %w", err)
+	}
 	return &q, nil
 }
 
@@ -121,6 +124,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing deleteUptimeResults: %w", cerr)
 		}
 	}
+	if q.getUptimeResultStatsForID != nil {
+		if cerr := q.getUptimeResultStatsForID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUptimeResultStatsForID: %w", cerr)
+		}
+	}
 	return err
 }
 
@@ -165,4 +173,5 @@ type Queries struct {
 	getUptimeResultCount         *sql.Stmt
 	getUptimeResults             *sql.Stmt
 	deleteUptimeResults          *sql.Stmt
+	getUptimeResultStatsForID    *sql.Stmt
 }
