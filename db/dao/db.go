@@ -194,22 +194,40 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                           DB
-	addKeyValue                  *sql.Stmt
-	updateKeyValue               *sql.Stmt
-	getKeyValue                  *sql.Stmt
-	deleteKeyValue               *sql.Stmt
-	addUptimeWatchRequest        *sql.Stmt
-	getUptimeWatchRequestByID    *sql.Stmt
-	getAllUptimeWatchRequest     *sql.Stmt
-	deleteUptimeWatchRequestById *sql.Stmt
-	addUptimeResult              *sql.Stmt
-	getUptimeResultCount         *sql.Stmt
-	getUptimeResults             *sql.Stmt
-	deleteUptimeResults          *sql.Stmt
-	getUptimeResultStatsForID    *sql.Stmt
-	addUptimeConclusion    		 *sql.Stmt
-	deleteUptimeConclusionByUWRID   *sql.Stmt
-	getUptimeConclusionByUWRID    	 *sql.Stmt
-	getAllUptimeConclusion    	 *sql.Stmt
+	db                            DB
+	addKeyValue                   *sql.Stmt
+	updateKeyValue                *sql.Stmt
+	getKeyValue                   *sql.Stmt
+	deleteKeyValue                *sql.Stmt
+	addUptimeWatchRequest         *sql.Stmt
+	getUptimeWatchRequestByID     *sql.Stmt
+	getAllUptimeWatchRequest      *sql.Stmt
+	deleteUptimeWatchRequestById  *sql.Stmt
+	addUptimeResult               *sql.Stmt
+	getUptimeResultCount          *sql.Stmt
+	getUptimeResults              *sql.Stmt
+	deleteUptimeResults           *sql.Stmt
+	getUptimeResultStatsForID     *sql.Stmt
+	addUptimeConclusion           *sql.Stmt
+	deleteUptimeConclusionByUWRID *sql.Stmt
+	getUptimeConclusionByUWRID    *sql.Stmt
+	getAllUptimeConclusion        *sql.Stmt
+}
+
+type Store interface {
+	AddKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error)
+	UpdateKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error)
+	GetKeyValue(ctx context.Context, key string) (KeyValue, error)
+	DeleteKeyValue(ctx context.Context, key string) error
+	AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchRequestParams) (UptimeWatchRequest, error)
+	GetUptimeWatchRequestByID(ctx context.Context, id int) (UptimeWatchRequest, error)
+	GetAllUptimeWatchRequest(ctx context.Context) ([]UptimeWatchRequest, error)
+	DeleteUptimeWatchRequestById(ctx context.Context, id int) error
+	UpdateUptimeWatchRequestById(ctx context.Context, updateData map[string]interface{}, id int) (UptimeWatchRequest, error)
+	AddUptimeResult(ctx context.Context, arg AddUptimeResultParams) (UptimeResult, error)
+	GetUptimeResultCount(ctx context.Context, arg int) (int, error)
+	GetUptimeResults(ctx context.Context, arg GetUptimeResultsParams) ([]UptimeResult, error)
+	DeleteUptimeResults(ctx context.Context, id int) error
+	GetUptimeResultStatsForID(ctx context.Context, id int) (UptimeResultStats, error)
+	
 }
