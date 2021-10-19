@@ -21,7 +21,8 @@ WHERE id = ?;
 SELECT uptime_result.id,
     count(
         CASE
-            WHEN response_time <= uptime_watch_request.std_response_time THEN response_time
+            WHEN response_time > -1
+            AND response_time <= uptime_watch_request.std_response_time THEN response_time
         END
     ) AS success_count,
     count(
@@ -41,7 +42,8 @@ SELECT uptime_result.id,
         IFNULL(
             avg(
                 CASE
-                    WHEN response_time <= uptime_watch_request.std_response_time THEN response_time
+                    WHEN response_time > -1
+                    AND response_time <= uptime_watch_request.std_response_time THEN response_time
                 END
             ),
             0
