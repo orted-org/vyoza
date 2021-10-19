@@ -146,6 +146,11 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 		res, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)
 		require.NotEmpty(t, res)
+		if i == 0 {
+			mustStats.StartDate = time.Now().UTC()
+			mustStats.MinResponseTime = 4000
+			mustStats.MaxResponseTime = 0
+		}
 		if arg.ResponseTime == -1 {
 			mustStats.ErrorCount++
 		} else if arg.ResponseTime <= uwr.StdResponseTime {
@@ -157,15 +162,10 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 			warningRespSum += arg.ResponseTime
 			mustStats.WarningCount++
 		}
-		if arg.ResponseTime <= mustStats.MinResponseTime {
+		if arg.ResponseTime > -1 && arg.ResponseTime <= mustStats.MinResponseTime {
 			mustStats.MinResponseTime = arg.ResponseTime
 		}
 		if arg.ResponseTime >= mustStats.MaxResponseTime {
-			mustStats.MaxResponseTime = arg.ResponseTime
-		}
-		if i == 0 {
-			mustStats.StartDate = time.Now().UTC()
-			mustStats.MinResponseTime = arg.ResponseTime
 			mustStats.MaxResponseTime = arg.ResponseTime
 		}
 		if i == n-1 {
