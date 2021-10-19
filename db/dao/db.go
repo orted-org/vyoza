@@ -229,5 +229,8 @@ type Store interface {
 	GetUptimeResults(ctx context.Context, arg GetUptimeResultsParams) ([]UptimeResult, error)
 	DeleteUptimeResults(ctx context.Context, id int) error
 	GetUptimeResultStatsForID(ctx context.Context, id int) (UptimeResultStats, error)
-	
+	AddUptimeConclusion(ctx context.Context, arg UptimeConclusion) (UptimeConclusion, error)
+	DeleteUptimeConclusionByUWRID(ctx context.Context, uwr_id int) error
+	GetUptimeConclusionByUWRID(ctx context.Context, uwr_id int) (UptimeConclusion, error)
+	GetAllUptimeConclusion(ctx context.Context, arg getAllUptimeConclusionParams) ([]UptimeConclusion, error)
 }
