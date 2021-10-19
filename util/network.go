@@ -1,9 +1,15 @@
 package util
 
 import (
+	"errors"
 	"io"
+	"net"
 	"net/http"
 	"time"
+)
+
+var (
+	ErrHTTPRequestTimeoutExceeded = errors.New("http request timeout exceeded")
 )
 
 func Fetch(method string, url string, header map[string]string, body io.Reader, timeout int) (*http.Response, error) {
@@ -25,5 +31,16 @@ func Fetch(method string, url string, header map[string]string, body io.Reader, 
 	}
 
 	// performing the call and returning the response and error
-	return client.Do(req)
+	res, err := client.Do(req)
+	if err != nil {
+		if isTimeoutError(err) {
+			return nil, ErrHTTPRequestTimeoutExceeded
+		}
+		return nil, err
+	}
+	return res, nil
+}
+func isTimeoutError(err error) bool {
+	e, ok := err.(net.Error)
+	return ok && e.Timeout()
 }
