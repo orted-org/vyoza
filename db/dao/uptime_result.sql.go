@@ -8,8 +8,8 @@ import (
 )
 
 const addUptimeResult = `
-INSERT INTO uptime_result(id, response_time)
-VALUES(?, ?)
+INSERT INTO uptime_result(id, response_time, created_at)
+VALUES(?, ?, ?)
 RETURNING id,
     response_time,
     created_at
@@ -21,7 +21,7 @@ type AddUptimeResultParams struct {
 }
 
 func (q *Queries) AddUptimeResult(ctx context.Context, arg AddUptimeResultParams) (UptimeResult, error) {
-	row := q.queryRow(ctx, q.addUptimeResult, addUptimeResult, arg.ID, arg.ResponseTime)
+	row := q.queryRow(ctx, q.addUptimeResult, addUptimeResult, arg.ID, arg.ResponseTime, time.Now().UTC())
 	var i UptimeResult
 	err := row.Scan(
 		&i.ID,
@@ -162,8 +162,10 @@ func (q *Queries) GetUptimeResultStatsForID(ctx context.Context, id int) (Uptime
 		&startDate,
 		&endDate,
 	)
-	startDate = strings.ReplaceAll(startDate, " ", "T") + ".000Z"
-	endDate = strings.ReplaceAll(endDate, " ", "T") + ".000Z"
+	startDate = strings.Split(strings.ReplaceAll(startDate, " ", "T"), ".")[0] + ".000Z"
+	endDate = strings.Split(strings.ReplaceAll(endDate, " ", "T"), ".")[0] + ".000Z"
+
+	//incoming -> 2021-10-19 10:29:51.712726+05:45
 	lay := "2006-01-02T15:04:05.000Z"
 
 	i.StartDate, _ = time.Parse(lay, startDate)

@@ -1,6 +1,6 @@
 -- create new result 
-INSERT INTO uptime_result(id, response_time)
-VALUES(?, ?)
+INSERT INTO uptime_result(id, response_time, created_at)
+VALUES(?, ?, ?)
 RETURNING id,
     response_time,
     created_at;
