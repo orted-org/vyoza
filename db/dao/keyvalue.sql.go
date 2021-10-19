@@ -12,7 +12,7 @@ RETURNING key_data, value_data, updated_at
 `
 
 func (q *Queries) AddKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error) {
-	row := q.queryRow(ctx, q.addKeyValue, addKeyValue, arg.Key, arg.Value, time.Now())
+	row := q.queryRow(ctx, q.addKeyValue, addKeyValue, arg.Key, arg.Value, time.Now().UTC())
 	var i KeyValue
 	err := row.Scan(
 		&i.Key,
@@ -28,7 +28,7 @@ RETURNING key_data, value_data, updated_at
 `
 
 func (q *Queries) UpdateKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error) {
-	row := q.queryRow(ctx, q.updateKeyValue, updateKeyValue, arg.Value, time.Now(), arg.Key)
+	row := q.queryRow(ctx, q.updateKeyValue, updateKeyValue, arg.Value, time.Now().UTC(), arg.Key)
 	var i KeyValue
 	err := row.Scan(
 		&i.Key,

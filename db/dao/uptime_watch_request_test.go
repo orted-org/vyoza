@@ -20,6 +20,7 @@ func createRandomUptimeWatchRequest(t *testing.T) UptimeWatchRequest {
 		Enabled:         util.RandomBool(),
 		Interval:        util.RandomInt(20, 60),
 		ExpectedStatus:  util.RandomInt(100, 600),
+		StdResponseTime: util.RandomInt(5, 10),
 		MaxResponseTime: util.RandomInt(10, 20),
 		RetainDuration:  util.RandomInt(1000, 2000),
 		HookLevel:       util.RandomInt(1, 3),
@@ -41,7 +42,7 @@ func createRandomUptimeWatchRequest(t *testing.T) UptimeWatchRequest {
 	require.Equal(t, arg.Description, uwr.Description)
 	require.Equal(t, arg.Location, uwr.Location)
 	require.Equal(t, arg.Enabled, uwr.Enabled)
-	require.WithinDuration(t, time.Now(), uwr.EnableUpdatedAt, time.Second)
+	require.WithinDuration(t, time.Now().UTC(), uwr.EnableUpdatedAt, time.Second)
 	require.Equal(t, arg.Interval, uwr.Interval)
 	require.Equal(t, arg.ExpectedStatus, uwr.ExpectedStatus)
 	require.Equal(t, arg.MaxResponseTime, uwr.MaxResponseTime)
@@ -80,7 +81,7 @@ func TestGetUptimeWatchRequestByID(t *testing.T) {
 	require.Equal(t, uwr.Description, incomingUWR.Description)
 	require.Equal(t, uwr.Location, incomingUWR.Location)
 	require.Equal(t, uwr.Enabled, incomingUWR.Enabled)
-	require.WithinDuration(t, time.Now(), incomingUWR.EnableUpdatedAt, time.Second)
+	require.WithinDuration(t, time.Now().UTC(), incomingUWR.EnableUpdatedAt, time.Second)
 	require.Equal(t, uwr.Interval, incomingUWR.Interval)
 	require.Equal(t, uwr.ExpectedStatus, incomingUWR.ExpectedStatus)
 	require.Equal(t, uwr.MaxResponseTime, incomingUWR.MaxResponseTime)
@@ -143,7 +144,7 @@ func TestGetAllUptimeWatchRequest(t *testing.T) {
 			require.Equal(t, oneFromCreated.Description, i.Description)
 			require.Equal(t, oneFromCreated.Location, i.Location)
 			require.Equal(t, oneFromCreated.Enabled, i.Enabled)
-			require.WithinDuration(t, time.Now(), i.EnableUpdatedAt, time.Second)
+			require.WithinDuration(t, time.Now().UTC(), i.EnableUpdatedAt, time.Second)
 			require.Equal(t, oneFromCreated.Interval, i.Interval)
 			require.Equal(t, oneFromCreated.ExpectedStatus, i.ExpectedStatus)
 			require.Equal(t, oneFromCreated.MaxResponseTime, i.MaxResponseTime)

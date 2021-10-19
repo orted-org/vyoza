@@ -56,6 +56,22 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.deleteUptimeResults, err = db.PrepareContext(ctx, deleteUptimeResults); err != nil {
 		return nil, fmt.Errorf("error preparing query deleteUptimeResults: %w", err)
 	}
+	if q.getUptimeResultStatsForID, err = db.PrepareContext(ctx, getUptimeResultStatsForID); err != nil {
+		return nil, fmt.Errorf("error preparing query getUptimeResultStatsForID: %w", err)
+	}
+	// ------ for uptime_conclusion Table
+	if q.addUptimeConclusion, err = db.PrepareContext(ctx, addUptimeConclusion); err != nil {
+		return nil, fmt.Errorf("error preparing query addUptimeConclusion: %w", err)
+	}
+	if q.deleteUptimeConclusionByUWRID, err = db.PrepareContext(ctx, deleteUptimeConclusionByUWRID); err != nil {
+		return nil, fmt.Errorf("error preparing query deleteUptimeConclusionByID: %w", err)
+	}
+	if q.getUptimeConclusionByUWRID, err = db.PrepareContext(ctx, getUptimeConclusionByUWRID); err != nil {
+		return nil, fmt.Errorf("error preparing query getUptimeConclusionByID: %w", err)
+	}
+	if q.getAllUptimeConclusion, err = db.PrepareContext(ctx, getAllUptimeConclusion); err != nil {
+		return nil, fmt.Errorf("error preparing query getAllUptimeConclusion: %w", err)
+	}
 	return &q, nil
 }
 
@@ -121,6 +137,32 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing deleteUptimeResults: %w", cerr)
 		}
 	}
+	if q.getUptimeResultStatsForID != nil {
+		if cerr := q.getUptimeResultStatsForID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUptimeResultStatsForID: %w", cerr)
+		}
+	}
+	// ------ for uptime_conclusion Table
+	if q.addUptimeConclusion != nil {
+		if cerr := q.addUptimeConclusion.Close(); cerr != nil {
+			err = fmt.Errorf("error closing addUptimeConclusion: %w", cerr)
+		}
+	}
+	if q.deleteUptimeConclusionByUWRID != nil {
+		if cerr := q.deleteUptimeConclusionByUWRID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteUptimeConclusionByID: %w", cerr)
+		}
+	}
+	if q.getUptimeConclusionByUWRID != nil {
+		if cerr := q.getUptimeConclusionByUWRID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUptimeConclusionByID: %w", cerr)
+		}
+	}
+	if q.getAllUptimeConclusion != nil {
+		if cerr := q.getAllUptimeConclusion.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAllUptimeConclusion: %w", cerr)
+		}
+	}
 	return err
 }
 
@@ -165,4 +207,9 @@ type Queries struct {
 	getUptimeResultCount         *sql.Stmt
 	getUptimeResults             *sql.Stmt
 	deleteUptimeResults          *sql.Stmt
+	getUptimeResultStatsForID    *sql.Stmt
+	addUptimeConclusion    		 *sql.Stmt
+	deleteUptimeConclusionByUWRID   *sql.Stmt
+	getUptimeConclusionByUWRID    	 *sql.Stmt
+	getAllUptimeConclusion    	 *sql.Stmt
 }

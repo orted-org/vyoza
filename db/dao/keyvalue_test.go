@@ -20,7 +20,7 @@ func createRandomKeyValue(t *testing.T) KeyValue {
 	require.NotZero(t, kv.UpdateAt)
 	require.Equal(t, arg.Key, kv.Key)
 	require.Equal(t, arg.Value, kv.Value)
-	require.WithinDuration(t, time.Now(), kv.UpdateAt, time.Second)
+	require.WithinDuration(t, time.Now().UTC(), kv.UpdateAt, time.Second)
 	return kv
 }
 
@@ -45,7 +45,7 @@ func TestUpdateKeyValue(t *testing.T) {
 	// comparing arg with updated kv
 	require.Equal(t, arg.Key, updatedKv.Key)
 	require.Equal(t, arg.Value, updatedKv.Value)
-	require.WithinDuration(t, time.Now(), updatedKv.UpdateAt, time.Second)
+	require.WithinDuration(t, time.Now().UTC(), updatedKv.UpdateAt, time.Second)
 }
 
 func TestGetKeyValue(t *testing.T) {
