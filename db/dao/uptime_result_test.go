@@ -159,12 +159,12 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 			mustStats.MaxResponseTime = arg.ResponseTime
 		}
 		if i == 0 {
-			mustStats.StartDate = time.Now()
+			mustStats.StartDate = time.Now().UTC()
 			mustStats.MinResponseTime = arg.ResponseTime
 			mustStats.MaxResponseTime = arg.ResponseTime
 		}
 		if i == n-1 {
-			mustStats.EndDate = time.Now()
+			mustStats.EndDate = time.Now().UTC()
 			if successRespCnt > 0 {
 				mustStats.AvgSuccessResponseTime = successRespSum / successRespCnt
 			}

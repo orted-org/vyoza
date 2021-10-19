@@ -7,13 +7,13 @@ import (
 )
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(time.Now().UTC().UnixNano())
 }
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
 func RandomInt(min, max int64) int {
-	return int(min + rand.Int63n(max - min + 1))
+	return int(min + rand.Int63n(max-min+1))
 }
 
 func RandomString(size int) string {
@@ -26,10 +26,10 @@ func RandomString(size int) string {
 }
 
 func RandomBool() bool {
-	num := rand.Int63n(2);
-	if num ==0 {
+	num := rand.Int63n(2)
+	if num == 0 {
 		return false
 	} else {
-		return true;
+		return true
 	}
 }

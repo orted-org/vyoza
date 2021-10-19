@@ -54,7 +54,7 @@ type AddUptimeWatchRequestParams struct {
 }
 
 func (q *Queries) AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchRequestParams) (UptimeWatchRequest, error) {
-	row := q.queryRow(ctx, q.addUptimeWatchRequest, addUptimeWatchRequest, arg.Title, arg.Description, arg.Location, arg.Enabled, time.Now(), arg.Interval, arg.ExpectedStatus, arg.StdResponseTime, arg.MaxResponseTime, arg.RetainDuration, arg.HookLevel, arg.HookAddress, arg.HookSecret)
+	row := q.queryRow(ctx, q.addUptimeWatchRequest, addUptimeWatchRequest, arg.Title, arg.Description, arg.Location, arg.Enabled, time.Now().UTC(), arg.Interval, arg.ExpectedStatus, arg.StdResponseTime, arg.MaxResponseTime, arg.RetainDuration, arg.HookLevel, arg.HookAddress, arg.HookSecret)
 	var i UptimeWatchRequest
 	err := row.Scan(
 		&i.ID,
@@ -223,7 +223,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		return i, err
 	}
 
-	row := q.db.QueryRowContext(ctx, qry, time.Now(), id)
+	row := q.db.QueryRowContext(ctx, qry, time.Now().UTC(), id)
 	err = row.Scan(
 		&i.ID,
 		&i.Title,
