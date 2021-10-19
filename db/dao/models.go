@@ -55,3 +55,16 @@ type UptimeResultStats struct {
 	StartDate              time.Time `json:"start_date"`
 	EndDate                time.Time `json:"end_date"`
 }
+
+type UptimeConclusion struct {
+	ID                     int       `json:"id"`
+	SuccessCount           int       `json:"success_count"`
+	WarningCount           int       `json:"warning_count"`
+	ErrorCount             int       `json:"error_count"`
+	MinResponseTime        int       `json:"min_response_time"`
+	MaxResponseTime        int       `json:"max_response_time"`
+	AvgSuccessResponseTime int       `json:"avg_success_resp_time"`
+	AvgWarningResponseTime int       `json:"avg_warning_resp_time"`
+	StartDate              time.Time `json:"start_date"`
+	EndDate                time.Time `json:"end_date"`
+}

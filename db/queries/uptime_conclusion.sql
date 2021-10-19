@@ -1,6 +1,6 @@
 --name : AddUptimeConclusion
 INSERT INTO uptime_conclusion (
-    id,
+    uwr_id,
     success_count,
     warning_count,
     error_count,
@@ -8,12 +8,11 @@ INSERT INTO uptime_conclusion (
     max_response_time,
     avg_success_resp_time,
     avg_warning_resp_time,
-    success_count,
     start_date,
     end_date
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-RETURNING id,
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+RETURNING uwr_id,
     success_count,
     warning_count,
     error_count,
@@ -21,16 +20,15 @@ RETURNING id,
     max_response_time,
     avg_success_resp_time,
     avg_warning_resp_time,
-    success_count,
     start_date,
     end_date;
 
---name : DeleteUptimeConclusionByID
+--name : DeleteUptimeConclusionByUWRID
 DELETE FROM uptime_conclusion
-WHERE id = ?;
+WHERE uwr_id = ?;
 
---name : GetUptimeConclusionByID
-SELECT id,
+--name : GetUptimeConclusionByUWRID
+SELECT uwr_id,
     success_count,
     warning_count,
     error_count,
@@ -38,14 +36,13 @@ SELECT id,
     max_response_time,
     avg_success_resp_time,
     avg_warning_resp_time,
-    success_count,
     start_date,
     end_date
 FROM uptime_conclusion;
-Where id = ?
+Where uwr_id = ?
 
 --name : GetAllUptimeConclusion
-SELECT id,
+SELECT uwr_id,
     success_count,
     warning_count,
     error_count,
@@ -53,7 +50,6 @@ SELECT id,
     max_response_time,
     avg_success_resp_time,
     avg_warning_resp_time,
-    success_count,
     start_date,
     end_date
 FROM uptime_conclusion;

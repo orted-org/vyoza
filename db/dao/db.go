@@ -63,10 +63,10 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.addUptimeConclusion, err = db.PrepareContext(ctx, addUptimeConclusion); err != nil {
 		return nil, fmt.Errorf("error preparing query addUptimeConclusion: %w", err)
 	}
-	if q.deleteUptimeConclusionByID, err = db.PrepareContext(ctx, deleteUptimeConclusionByID); err != nil {
+	if q.deleteUptimeConclusionByUWRID, err = db.PrepareContext(ctx, deleteUptimeConclusionByUWRID); err != nil {
 		return nil, fmt.Errorf("error preparing query deleteUptimeConclusionByID: %w", err)
 	}
-	if q.getUptimeConclusionByID, err = db.PrepareContext(ctx, getUptimeConclusionByID); err != nil {
+	if q.getUptimeConclusionByUWRID, err = db.PrepareContext(ctx, getUptimeConclusionByUWRID); err != nil {
 		return nil, fmt.Errorf("error preparing query getUptimeConclusionByID: %w", err)
 	}
 	if q.getAllUptimeConclusion, err = db.PrepareContext(ctx, getAllUptimeConclusion); err != nil {
@@ -148,13 +148,13 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing addUptimeConclusion: %w", cerr)
 		}
 	}
-	if q.deleteUptimeConclusionByID != nil {
-		if cerr := q.deleteUptimeConclusionByID.Close(); cerr != nil {
+	if q.deleteUptimeConclusionByUWRID != nil {
+		if cerr := q.deleteUptimeConclusionByUWRID.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteUptimeConclusionByID: %w", cerr)
 		}
 	}
-	if q.getUptimeConclusionByID != nil {
-		if cerr := q.getUptimeConclusionByID.Close(); cerr != nil {
+	if q.getUptimeConclusionByUWRID != nil {
+		if cerr := q.getUptimeConclusionByUWRID.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getUptimeConclusionByID: %w", cerr)
 		}
 	}
@@ -209,7 +209,7 @@ type Queries struct {
 	deleteUptimeResults          *sql.Stmt
 	getUptimeResultStatsForID    *sql.Stmt
 	addUptimeConclusion    		 *sql.Stmt
-	deleteUptimeConclusionByID   *sql.Stmt
-	getUptimeConclusionByID    	 *sql.Stmt
+	deleteUptimeConclusionByUWRID   *sql.Stmt
+	getUptimeConclusionByUWRID    	 *sql.Stmt
 	getAllUptimeConclusion    	 *sql.Stmt
 }

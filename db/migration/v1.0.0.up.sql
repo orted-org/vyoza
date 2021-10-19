@@ -26,7 +26,7 @@ CREATE TABLE uptime_result(
 );
 
 CREATE TABLE IF NOT EXISTS  uptime_conclusion (
-    id INTEGER UNIQUE REFERENCES uptime_watch_request(id),
+    uwr_id INTEGER UNIQUE REFERENCES uptime_watch_request(id),
     success_count INTEGER NOT NULL,
     warning_count INTEGER NOT NULL,
     error_count INTEGER NOT NULL,
@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS  uptime_conclusion (
     max_response_time INTEGER NOT NULL,
     avg_success_resp_time INTEGER NOT NULL,
     avg_warning_resp_time INTEGER NOT NULL,
-    success_count INTEGER NOT NULL,
     start_date TIMESTAMP 
     end_date TIMESTAMP
 )

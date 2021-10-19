@@ -28,13 +28,17 @@ RETURNING id,
     end_date;
 `
 
+type addUptimeConclusionParams struct {
 
-const deleteUptimeConclusionByID = `
+}
+
+
+const deleteUptimeConclusionByUWRID = `
 DELETE FROM uptime_conclusion
 WHERE id = ?;
 `
 
-const getUptimeConclusionByID = `
+const getUptimeConclusionByUWRID = `
 SELECT id,
     success_count,
     warning_count,
