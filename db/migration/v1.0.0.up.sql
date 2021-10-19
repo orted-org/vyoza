@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS uptime_watch_request(
 CREATE TABLE uptime_result(
     id INTEGER REFERENCES uptime_watch_request(id),
     response_time INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+    created_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS  uptime_conclusion (
@@ -34,6 +34,6 @@ CREATE TABLE IF NOT EXISTS  uptime_conclusion (
     max_response_time INTEGER NOT NULL,
     avg_success_resp_time INTEGER NOT NULL,
     avg_warning_resp_time INTEGER NOT NULL,
-    start_date TIMESTAMP 
+    start_date TIMESTAMP,
     end_date TIMESTAMP
 )

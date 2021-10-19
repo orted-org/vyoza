@@ -97,8 +97,8 @@ SELECT uwr_id,
     avg_warning_resp_time,
     start_date,
     end_date
-FROM uptime_conclusion;
-Where uwr_id = ?
+FROM uptime_conclusion
+WHERE uwr_id = ?
 `
 
 func (q *Queries) GetUptimeConclusionByUWRID(ctx context.Context, uwr_id int) (UptimeConclusion, error) {
