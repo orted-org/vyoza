@@ -32,7 +32,7 @@ SELECT uptime_result.id,
     ) AS warning_count,
     count(
         CASE
-            WHEN response_time > uptime_watch_request.max_response_time THEN response_time
+            WHEN response_time == -1 THEN response_time
         END
     ) AS error_count,
     min(response_time) AS min_response_time,
