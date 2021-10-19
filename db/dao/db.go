@@ -20,6 +20,8 @@ func NewDB(db DB) *Queries {
 func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+
+	// key value
 	if q.addKeyValue, err = db.PrepareContext(ctx, addKeyValue); err != nil {
 		return nil, fmt.Errorf("error preparing query addKeyValue: %w", err)
 	}
@@ -32,6 +34,8 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.deleteKeyValue, err = db.PrepareContext(ctx, deleteKeyValue); err != nil {
 		return nil, fmt.Errorf("error preparing query deleteKeyValue: %w", err)
 	}
+
+	// uptime watch request
 	if q.addUptimeWatchRequest, err = db.PrepareContext(ctx, addUptimeWatchRequest); err != nil {
 		return nil, fmt.Errorf("error preparing query addUptimeWatchRequest: %w", err)
 	}
@@ -44,6 +48,8 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.deleteUptimeWatchRequestById, err = db.PrepareContext(ctx, deleteUptimeWatchRequestById); err != nil {
 		return nil, fmt.Errorf("error preparing query getAllUptimeWatchRequest: %w", err)
 	}
+
+	// uptime result
 	if q.addUptimeResult, err = db.PrepareContext(ctx, addUptimeResult); err != nil {
 		return nil, fmt.Errorf("error preparing query addUptimeResult: %w", err)
 	}
@@ -59,7 +65,8 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.getUptimeResultStatsForID, err = db.PrepareContext(ctx, getUptimeResultStatsForID); err != nil {
 		return nil, fmt.Errorf("error preparing query getUptimeResultStatsForID: %w", err)
 	}
-	// ------ for uptime_conclusion Table
+
+	// uptime conclusion
 	if q.addUptimeConclusion, err = db.PrepareContext(ctx, addUptimeConclusion); err != nil {
 		return nil, fmt.Errorf("error preparing query addUptimeConclusion: %w", err)
 	}
@@ -77,6 +84,8 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
+
+	// key value
 	if q.addKeyValue != nil {
 		if cerr := q.addKeyValue.Close(); cerr != nil {
 			err = fmt.Errorf("error closing addKeyValue: %w", cerr)
@@ -97,6 +106,8 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing deleteKeyValue: %w", cerr)
 		}
 	}
+
+	// uptime watch request
 	if q.addUptimeWatchRequest != nil {
 		if cerr := q.addUptimeWatchRequest.Close(); cerr != nil {
 			err = fmt.Errorf("error closing addUptimeWatchRequest: %w", cerr)
@@ -117,6 +128,8 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing deleteUptimeWatchRequestById: %w", cerr)
 		}
 	}
+
+	// uptime result
 	if q.addUptimeResult != nil {
 		if cerr := q.addUptimeResult.Close(); cerr != nil {
 			err = fmt.Errorf("error closing addUptimeResult: %w", cerr)
@@ -142,7 +155,8 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getUptimeResultStatsForID: %w", cerr)
 		}
 	}
-	// ------ for uptime_conclusion Table
+
+	// uptime conclusion
 	if q.addUptimeConclusion != nil {
 		if cerr := q.addUptimeConclusion.Close(); cerr != nil {
 			err = fmt.Errorf("error closing addUptimeConclusion: %w", cerr)
@@ -194,22 +208,58 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                           DB
-	addKeyValue                  *sql.Stmt
-	updateKeyValue               *sql.Stmt
-	getKeyValue                  *sql.Stmt
-	deleteKeyValue               *sql.Stmt
+	db DB
+
+	// keyvalue
+	addKeyValue    *sql.Stmt
+	updateKeyValue *sql.Stmt
+	getKeyValue    *sql.Stmt
+	deleteKeyValue *sql.Stmt
+
+	// uptime watch request
 	addUptimeWatchRequest        *sql.Stmt
 	getUptimeWatchRequestByID    *sql.Stmt
 	getAllUptimeWatchRequest     *sql.Stmt
 	deleteUptimeWatchRequestById *sql.Stmt
-	addUptimeResult              *sql.Stmt
-	getUptimeResultCount         *sql.Stmt
-	getUptimeResults             *sql.Stmt
-	deleteUptimeResults          *sql.Stmt
-	getUptimeResultStatsForID    *sql.Stmt
-	addUptimeConclusion    		 *sql.Stmt
-	deleteUptimeConclusionByUWRID   *sql.Stmt
-	getUptimeConclusionByUWRID    	 *sql.Stmt
-	getAllUptimeConclusion    	 *sql.Stmt
+
+	// uptime watch result
+	addUptimeResult           *sql.Stmt
+	getUptimeResultCount      *sql.Stmt
+	getUptimeResults          *sql.Stmt
+	deleteUptimeResults       *sql.Stmt
+	getUptimeResultStatsForID *sql.Stmt
+
+	// uptime conclusion
+	addUptimeConclusion           *sql.Stmt
+	deleteUptimeConclusionByUWRID *sql.Stmt
+	getUptimeConclusionByUWRID    *sql.Stmt
+	getAllUptimeConclusion        *sql.Stmt
+}
+
+type Store interface {
+	// keyvalue
+	AddKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error)
+	UpdateKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error)
+	GetKeyValue(ctx context.Context, key string) (KeyValue, error)
+	DeleteKeyValue(ctx context.Context, key string) error
+
+	// uptime watch request
+	AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchRequestParams) (UptimeWatchRequest, error)
+	GetUptimeWatchRequestByID(ctx context.Context, id int) (UptimeWatchRequest, error)
+	GetAllUptimeWatchRequest(ctx context.Context) ([]UptimeWatchRequest, error)
+	DeleteUptimeWatchRequestById(ctx context.Context, id int) error
+	UpdateUptimeWatchRequestById(ctx context.Context, updateData map[string]interface{}, id int) (UptimeWatchRequest, error)
+
+	// uptime result
+	AddUptimeResult(ctx context.Context, arg AddUptimeResultParams) (UptimeResult, error)
+	GetUptimeResultCount(ctx context.Context, arg int) (int, error)
+	GetUptimeResults(ctx context.Context, arg GetUptimeResultsParams) ([]UptimeResult, error)
+	DeleteUptimeResults(ctx context.Context, id int) error
+	GetUptimeResultStatsForID(ctx context.Context, id int) (UptimeResultStats, error)
+
+	// uptime conclusion
+	AddUptimeConclusion(ctx context.Context, arg UptimeConclusion) (UptimeConclusion, error)
+	DeleteUptimeConclusionByUWRID(ctx context.Context, uwr_id int) error
+	GetUptimeConclusionByUWRID(ctx context.Context, uwr_id int) (UptimeConclusion, error)
+	GetAllUptimeConclusion(ctx context.Context, arg getAllUptimeConclusionParams) ([]UptimeConclusion, error)
 }
