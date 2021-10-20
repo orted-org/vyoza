@@ -8,24 +8,27 @@ import (
 )
 
 const addUptimeResult = `
-INSERT INTO uptime_result(id, response_time, created_at)
-VALUES(?, ?, ?)
+INSERT INTO uptime_result(id, response_time, remark, created_at)
+VALUES(?, ?, ?, ?)
 RETURNING id,
     response_time,
+	remark,
     created_at
 `
 
 type AddUptimeResultParams struct {
 	ID           int
+	Remark       string
 	ResponseTime int
 }
 
 func (q *Queries) AddUptimeResult(ctx context.Context, arg AddUptimeResultParams) (UptimeResult, error) {
-	row := q.queryRow(ctx, q.addUptimeResult, addUptimeResult, arg.ID, arg.ResponseTime, time.Now().UTC())
+	row := q.queryRow(ctx, q.addUptimeResult, addUptimeResult, arg.ID, arg.ResponseTime, arg.Remark, time.Now().UTC())
 	var i UptimeResult
 	err := row.Scan(
 		&i.ID,
 		&i.ResponseTime,
+		&i.Remark,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -48,6 +51,7 @@ func (q *Queries) GetUptimeResultCount(ctx context.Context, arg int) (int, error
 const getUptimeResults = `
 SELECT id,
     response_time,
+	remark,
     created_at
 FROM uptime_result
 WHERE id = ?
@@ -72,6 +76,7 @@ func (q *Queries) GetUptimeResults(ctx context.Context, arg GetUptimeResultsPara
 		if err := rows.Scan(
 			&i.ID,
 			&i.ResponseTime,
+			&i.Remark,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
