@@ -22,10 +22,10 @@ CREATE TABLE IF NOT EXISTS uptime_watch_request(
 CREATE TABLE uptime_result(
     id INTEGER REFERENCES uptime_watch_request(id),
     response_time INTEGER NOT NULL,
+    remark TEXT NOT NULL,
     created_at TIMESTAMP
 );
-
-CREATE TABLE IF NOT EXISTS  uptime_conclusion (
+CREATE TABLE IF NOT EXISTS uptime_conclusion (
     uwr_id INTEGER UNIQUE REFERENCES uptime_watch_request(id),
     success_count INTEGER NOT NULL,
     warning_count INTEGER NOT NULL,
