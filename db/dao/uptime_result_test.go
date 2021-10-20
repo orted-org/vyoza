@@ -19,6 +19,7 @@ func createRamdomUptimeResult(t *testing.T) UptimeResult {
 	arg := AddUptimeResultParams{
 		ID:           uwr.ID,
 		ResponseTime: randomResponeTime,
+		Remark:       util.RandomString(10),
 	}
 
 	i, err := tq.AddUptimeResult(context.Background(), arg)
@@ -57,6 +58,7 @@ func TestGetUptimeResults(t *testing.T) {
 		arg := AddUptimeResultParams{
 			ID:           uwr.ID,
 			ResponseTime: randomResponeTime,
+			Remark:       util.RandomString(10),
 		}
 		res, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)
@@ -103,6 +105,7 @@ func TestDeleteUptimeResults(t *testing.T) {
 		arg := AddUptimeResultParams{
 			ID:           uwr.ID,
 			ResponseTime: randomResponeTime,
+			Remark:       util.RandomString(10),
 		}
 		res, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)
@@ -155,6 +158,7 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 		arg := AddUptimeResultParams{
 			ID:           uwr.ID,
 			ResponseTime: randomResponeTime,
+			Remark:       util.RandomString(10),
 		}
 		res, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)

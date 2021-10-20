@@ -21,6 +21,7 @@ func createRandomUptimeConclusion(t *testing.T) UptimeConclusion {
 		arg := AddUptimeResultParams{
 			ID:           uwr.ID,
 			ResponseTime: randomResponeTime,
+			Remark:       util.RandomString(10),
 		}
 		_, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)
