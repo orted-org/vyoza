@@ -40,6 +40,7 @@ type UptimeWatchRequest struct {
 type UptimeResult struct {
 	ID           int       `json:"id"`
 	ResponseTime int       `json:"response_time"`
+	Remark       string    `json:"remark"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 
