@@ -12,10 +12,16 @@ import (
 func createRamdomUptimeResult(t *testing.T) UptimeResult {
 	uwr := createRandomUptimeWatchRequest(t)
 
+	randomResponeTime := util.RandomInt(-1, 4000)
+	if randomResponeTime > uwr.MaxResponseTime {
+		randomResponeTime = -1
+	}
 	arg := AddUptimeResultParams{
 		ID:           uwr.ID,
-		ResponseTime: util.RandomInt(1, 3),
+		ResponseTime: randomResponeTime,
+		Remark:       util.RandomString(10),
 	}
+
 	i, err := tq.AddUptimeResult(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, i)
@@ -23,6 +29,7 @@ func createRamdomUptimeResult(t *testing.T) UptimeResult {
 	require.NotZero(t, i.CreatedAt)
 	require.Equal(t, uwr.ID, i.ID)
 	require.Equal(t, i.ResponseTime, arg.ResponseTime)
+	require.Equal(t,arg.Remark, i.Remark)
 	return i
 }
 func TestAddUptimeResult(t *testing.T) {
@@ -45,9 +52,14 @@ func TestGetUptimeResults(t *testing.T) {
 	var avgSaved = 0
 	uwr := createRandomUptimeWatchRequest(t)
 	for i := 0; i < n; i++ {
+		randomResponeTime := util.RandomInt(-1, 4000)
+		if randomResponeTime > uwr.MaxResponseTime {
+			randomResponeTime = -1
+		}
 		arg := AddUptimeResultParams{
 			ID:           uwr.ID,
-			ResponseTime: util.RandomInt(1, 10),
+			ResponseTime: randomResponeTime,
+			Remark:       util.RandomString(10),
 		}
 		res, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)
@@ -87,9 +99,14 @@ func TestDeleteUptimeResults(t *testing.T) {
 	var avgSaved = 0
 	uwr := createRandomUptimeWatchRequest(t)
 	for i := 0; i < n; i++ {
+		randomResponeTime := util.RandomInt(-1, 4000)
+		if randomResponeTime > uwr.MaxResponseTime {
+			randomResponeTime = -1
+		}
 		arg := AddUptimeResultParams{
 			ID:           uwr.ID,
-			ResponseTime: util.RandomInt(1, 10),
+			ResponseTime: randomResponeTime,
+			Remark:       util.RandomString(10),
 		}
 		res, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)
@@ -133,34 +150,40 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 	warningRespSum := 0
 	successRespCnt := 0
 	warningRespCnt := 0
+
 	for i := 0; i < n; i++ {
+		randomResponeTime := util.RandomInt(-1, 4000)
+		if randomResponeTime > uwr.MaxResponseTime {
+			randomResponeTime = -1
+		}
 		arg := AddUptimeResultParams{
 			ID:           uwr.ID,
-			ResponseTime: util.RandomInt(1, 10),
+			ResponseTime: randomResponeTime,
+			Remark:       util.RandomString(10),
 		}
 		res, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)
 		require.NotEmpty(t, res)
-		if arg.ResponseTime <= uwr.StdResponseTime {
-			successRespCnt += 1
+		if i == 0 {
+			mustStats.StartDate = time.Now().UTC()
+			mustStats.MinResponseTime = 4000
+			mustStats.MaxResponseTime = 0
+		}
+		if arg.ResponseTime == -1 {
+			mustStats.ErrorCount++
+		} else if arg.ResponseTime <= uwr.StdResponseTime {
+			successRespCnt++
 			successRespSum += arg.ResponseTime
 			mustStats.SuccessCount++
 		} else if arg.ResponseTime > uwr.StdResponseTime && arg.ResponseTime <= uwr.MaxResponseTime {
-			warningRespCnt += 1
+			warningRespCnt++
 			warningRespSum += arg.ResponseTime
 			mustStats.WarningCount++
-		} else {
-			mustStats.ErrorCount++
 		}
-		if arg.ResponseTime <= mustStats.MinResponseTime {
+		if arg.ResponseTime > -1 && arg.ResponseTime <= mustStats.MinResponseTime {
 			mustStats.MinResponseTime = arg.ResponseTime
 		}
 		if arg.ResponseTime >= mustStats.MaxResponseTime {
-			mustStats.MaxResponseTime = arg.ResponseTime
-		}
-		if i == 0 {
-			mustStats.StartDate = time.Now().UTC()
-			mustStats.MinResponseTime = arg.ResponseTime
 			mustStats.MaxResponseTime = arg.ResponseTime
 		}
 		if i == n-1 {
@@ -175,6 +198,7 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 		}
 	}
 	inStats, err := tq.GetUptimeResultStatsForID(context.Background(), uwr.ID)
+
 	require.NoError(t, err)
 	require.NotEmpty(t, inStats)
 

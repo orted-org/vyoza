@@ -14,9 +14,14 @@ func createRandomUptimeConclusion(t *testing.T) UptimeConclusion {
 	n := 10
 	uwr := createRandomUptimeWatchRequest(t)
 	for i := 0; i < n; i++ {
+		randomResponeTime := util.RandomInt(-1, 4000)
+		if randomResponeTime > uwr.MaxResponseTime {
+			randomResponeTime = -1
+		}
 		arg := AddUptimeResultParams{
 			ID:           uwr.ID,
-			ResponseTime: util.RandomInt(1, 10),
+			ResponseTime: randomResponeTime,
+			Remark:       util.RandomString(10),
 		}
 		_, err := tq.AddUptimeResult(context.Background(), arg)
 		require.NoError(t, err)
