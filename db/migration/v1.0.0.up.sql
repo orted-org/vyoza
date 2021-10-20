@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS uptime_watch_request(
     hook_addr TEXT NOT NULL,
     hook_secret TEXT NOT NULL
 );
-CREATE TABLE uptime_result(
+CREATE TABLE IF NOT EXISTS uptime_result(
     id INTEGER REFERENCES uptime_watch_request(id),
     response_time INTEGER NOT NULL,
     remark TEXT NOT NULL,

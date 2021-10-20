@@ -29,6 +29,7 @@ func createRamdomUptimeResult(t *testing.T) UptimeResult {
 	require.NotZero(t, i.CreatedAt)
 	require.Equal(t, uwr.ID, i.ID)
 	require.Equal(t, i.ResponseTime, arg.ResponseTime)
+	require.Equal(t,arg.Remark, i.Remark)
 	return i
 }
 func TestAddUptimeResult(t *testing.T) {
