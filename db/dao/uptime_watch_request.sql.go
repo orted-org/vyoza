@@ -23,7 +23,7 @@ INSERT INTO uptime_watch_request (
 	hook_secret,
 	notification_email
 )
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	RETURNING id,
 	title,
 	description,
@@ -60,7 +60,7 @@ type AddUptimeWatchRequestParams struct {
 }
 
 func (q *Queries) AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchRequestParams) (UptimeWatchRequest, error) {
-	row := q.queryRow(ctx, q.addUptimeWatchRequest, addUptimeWatchRequest, arg.Title, arg.Description, arg.Location, arg.Enabled, time.Now().UTC(), arg.Interval, arg.SSLMonitor, arg.ExpectedStatus, arg.StdResponseTime, arg.MaxResponseTime, arg.RetainDuration, arg.HookLevel, arg.HookAddress, arg.HookSecret)
+	row := q.queryRow(ctx, q.addUptimeWatchRequest, addUptimeWatchRequest, arg.Title, arg.Description, arg.Location, arg.Enabled, time.Now().UTC(), arg.Interval, arg.SSLMonitor, arg.ExpectedStatus, arg.StdResponseTime, arg.MaxResponseTime, arg.RetainDuration, arg.HookLevel, arg.HookAddress, arg.HookSecret, arg.NotificationEmail)
 	var i UptimeWatchRequest
 	err := row.Scan(
 		&i.ID,
