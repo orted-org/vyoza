@@ -13,15 +13,17 @@ INSERT INTO uptime_watch_request (
 	enabled,
 	enable_updated_at,
 	interval,
+	ssl_monitor,
 	expected_status,
 	std_response_time,
 	max_response_time,
 	retain_duration,
 	hook_level,
 	hook_addr,
-	hook_secret
+	hook_secret,
+	notificationEmail,
 )
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	RETURNING id,
 	title,
 	description,
@@ -29,32 +31,36 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	enabled,
 	enable_updated_at,
 	interval,
+	ssl_monitor,
 	expected_status,
 	std_response_time,
 	max_response_time,
 	retain_duration,
 	hook_level,
 	hook_addr,
-	hook_secret
+	hook_secret,
+	notificationEmail
 `
 
 type AddUptimeWatchRequestParams struct {
-	Title           string
-	Description     string
-	Location        string
-	Enabled         bool
-	Interval        int
-	ExpectedStatus  int
-	StdResponseTime int
-	MaxResponseTime int
-	RetainDuration  int
-	HookLevel       int
-	HookAddress     string
-	HookSecret      string
+	Title             string
+	Description       string
+	Location          string
+	Enabled           bool
+	Interval          int
+	SSLMonitor        bool
+	ExpectedStatus    int
+	StdResponseTime   int
+	MaxResponseTime   int
+	RetainDuration    int
+	HookLevel         int
+	HookAddress       string
+	HookSecret        string
+	NotificationEmail string
 }
 
 func (q *Queries) AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchRequestParams) (UptimeWatchRequest, error) {
-	row := q.queryRow(ctx, q.addUptimeWatchRequest, addUptimeWatchRequest, arg.Title, arg.Description, arg.Location, arg.Enabled, time.Now().UTC(), arg.Interval, arg.ExpectedStatus, arg.StdResponseTime, arg.MaxResponseTime, arg.RetainDuration, arg.HookLevel, arg.HookAddress, arg.HookSecret)
+	row := q.queryRow(ctx, q.addUptimeWatchRequest, addUptimeWatchRequest, arg.Title, arg.Description, arg.Location, arg.Enabled, time.Now().UTC(), arg.Interval, arg.SSLMonitor, arg.ExpectedStatus, arg.StdResponseTime, arg.MaxResponseTime, arg.RetainDuration, arg.HookLevel, arg.HookAddress, arg.HookSecret)
 	var i UptimeWatchRequest
 	err := row.Scan(
 		&i.ID,
@@ -64,6 +70,7 @@ func (q *Queries) AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchR
 		&i.Enabled,
 		&i.EnableUpdatedAt,
 		&i.Interval,
+		&i.SSLMonitor,
 		&i.ExpectedStatus,
 		&i.StdResponseTime,
 		&i.MaxResponseTime,
@@ -71,6 +78,7 @@ func (q *Queries) AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchR
 		&i.HookLevel,
 		&i.HookAddress,
 		&i.HookSecret,
+		&i.NotificationEmail,
 	)
 	return i, err
 }
