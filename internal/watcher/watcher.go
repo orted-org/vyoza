@@ -66,7 +66,7 @@ func (w *Watcher) IfAlreadyRegistered(id int) bool {
 }
 
 // function to perform watch at regular interval
-func Performer(arg WatcherParams, res chan WatcherResult, quitter chan struct{}) {
+func Performer(arg WatcherParams, res chan<- WatcherResult, quitter <-chan struct{}) {
 	ticker := time.NewTicker(time.Second * time.Duration(arg.Interval))
 	for {
 		select {
@@ -77,7 +77,7 @@ func Performer(arg WatcherParams, res chan WatcherResult, quitter chan struct{})
 		}
 	}
 }
-func GetWatcherResult(arg *WatcherParams, result chan WatcherResult) {
+func GetWatcherResult(arg *WatcherParams, result chan<- WatcherResult) {
 	genRes := WatcherResult{
 		ID:           arg.ID,
 		ResponseTime: -1,
