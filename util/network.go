@@ -87,7 +87,7 @@ type SSLCertificateDetails struct {
 	Remark  string
 }
 
-func GetSSLCertificateDetails(url string, timeout int) (SSLCertificateDetails, error) {
+func GetSSLCertificateDetails(url string, timeout int) SSLCertificateDetails {
 	url = convertURLToTLSURI(url)
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cancelFunc()
@@ -102,15 +102,15 @@ func GetSSLCertificateDetails(url string, timeout int) (SSLCertificateDetails, e
 		}
 		defer conn.Close()
 		genRes.IsValid = true
-		genRes.Remark = ""
+		genRes.Remark = conn.ConnectionState().PeerCertificates[0].Issuer.String()
 		genRes.Expiry = conn.ConnectionState().PeerCertificates[0].NotAfter
 		result <- genRes
 	}(result, &url)
 	select {
 	case <-ctx.Done():
-		return SSLCertificateDetails{}, ErrTLSRequestTimeoutExceeded
+		return SSLCertificateDetails{IsValid: false, Remark: ErrTLSRequestTimeoutExceeded.Error()}
 	case <-result:
-		return <-result, nil
+		return <-result
 	}
 }
 
