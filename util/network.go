@@ -1,15 +1,19 @@
 package util
 
 import (
+	"context"
+	"crypto/tls"
 	"errors"
 	"io"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
 var (
 	ErrHTTPRequestTimeoutExceeded = errors.New("http request timeout exceeded")
+	ErrTLSRequestTimeoutExceeded  = errors.New("tls request timed out")
 )
 
 func Fetch(method string, url string, header map[string]string, body io.Reader, timeout int) (*http.Response, error) {
@@ -46,3 +50,45 @@ func isTimeoutError(err error) bool {
 	e, ok := err.(net.Error)
 	return ok && e.Timeout()
 }
+
+type SSLCertificateDetails struct {
+	IsValid bool
+	Expiry  time.Time
+	Remark  string
+}
+
+func GetSSLCertificateDetails(url string, timeout int) SSLCertificateDetails {
+	url = convertURLToTLSURI(url)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
+	defer cancelFunc()
+	result := make(chan SSLCertificateDetails)
+	go func(result chan<- SSLCertificateDetails, url *string) {
+		genRes := SSLCertificateDetails{
+			IsValid: false,
+		}
+		conn, err := tls.Dial("tcp", *url, nil)
+		if err != nil {
+			genRes.Remark = err.Error()
+		}
+		defer conn.Close()
+		genRes.IsValid = true
+		genRes.Remark = conn.ConnectionState().PeerCertificates[0].Issuer.String()
+		genRes.Expiry = conn.ConnectionState().PeerCertificates[0].NotAfter.UTC()
+		result <- genRes
+	}(result, &url)
+	select {
+	case <-ctx.Done():
+		return SSLCertificateDetails{IsValid: false, Remark: ErrTLSRequestTimeoutExceeded.Error()}
+	case <-result:
+		return <-result
+	}
+}
+
+func convertURLToTLSURI(url string) string {
+	parts := strings.Split(url, "//")
+	if len(parts) > 1 {
+		url = parts[1]
+	}
+	return strings.Split(url, ":")[0] + ":443"
+}
+
