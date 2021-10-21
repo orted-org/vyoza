@@ -92,7 +92,7 @@ func GetSSLCertificateDetails(url string, timeout int) SSLCertificateDetails {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cancelFunc()
 	result := make(chan SSLCertificateDetails)
-	go func(result chan SSLCertificateDetails, url *string) {
+	go func(result chan<- SSLCertificateDetails, url *string) {
 		genRes := SSLCertificateDetails{
 			IsValid: false,
 		}
