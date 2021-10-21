@@ -217,8 +217,7 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		max_response_time,
 		retain_duration,
 		hook_level,
-		hook_addr
-		hook_secret
+		hook_addr,
 		notification_email
 	`
 	qry, err := CreateDynamicUpdateQuery(updateData, map[string]string{
@@ -252,12 +251,14 @@ func (q *Queries) UpdateUptimeWatchRequestById(ctx context.Context, updateData m
 		&i.Enabled,
 		&i.EnableUpdatedAt,
 		&i.Interval,
+		&i.SSLMonitor,
 		&i.ExpectedStatus,
 		&i.StdResponseTime,
 		&i.MaxResponseTime,
 		&i.RetainDuration,
 		&i.HookLevel,
 		&i.HookAddress,
+		&i.NotificationEmail,
 	)
 	return i, err
 }
