@@ -21,7 +21,7 @@ INSERT INTO uptime_watch_request (
 	hook_level,
 	hook_addr,
 	hook_secret,
-	notificationEmail,
+	notificationEmail
 )
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	RETURNING id,

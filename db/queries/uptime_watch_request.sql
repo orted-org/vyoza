@@ -6,7 +6,7 @@ INSERT INTO uptime_watch_request (
         enabled,
         enable_updated_at,
         interval,
-        sslMonitor,
+        ssl_monitor,
         expected_status,
         std_response_time,
         max_response_time,
@@ -14,7 +14,7 @@ INSERT INTO uptime_watch_request (
         hook_level,
         hook_addr,
         hook_secret,
-        notificationEmail,
+        notification_email
     )
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 RETURNING id,
@@ -24,6 +24,7 @@ RETURNING id,
     enabled,
     enable_updated_at,
     interval,
+    ssl_monitor,
     expected_status,
     std_response_time,
     max_response_time,
@@ -31,7 +32,7 @@ RETURNING id,
     hook_level,
     hook_addr,
     hook_secret,
-    notificationEmail;
+    notification_email;
 -- get one uptime watch request by id
 SELECT id,
     title,
@@ -40,7 +41,7 @@ SELECT id,
     enabled,
     enable_updated_at,
     interval,
-    sslMonitor,
+    ssl_monitor,
     expected_status,
     std_response_time,
     max_response_time,
@@ -48,7 +49,7 @@ SELECT id,
     hook_level,
     hook_addr,
     hook_secret,
-    notificationEmail
+    notification_email
 FROM uptime_watch_request
 WHERE id = ?;
 -- get all uptime watch request
@@ -59,7 +60,7 @@ SELECT id,
     enabled,
     enable_updated_at,
     interval,
-    sslMonitor,
+    ssl_monitor,
     expected_status,
     std_response_time,
     max_response_time,
@@ -67,7 +68,7 @@ SELECT id,
     hook_level,
     hook_addr,
     hook_secret,
-    notificationEmail
+    notification_email
 FROM uptime_watch_request;
 -- delete uptime watch by id
 DELETE FROM uptime_watch_request
