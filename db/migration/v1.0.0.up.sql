@@ -11,13 +11,15 @@ CREATE TABLE IF NOT EXISTS uptime_watch_request(
     enabled BOOLEAN NOT NULL,
     enable_updated_at TIMESTAMP NOT NULL,
     interval INTEGER NOT NULL,
+    ssl_monitor BOOLEAN NOT NULL,
     expected_status INTEGER NOT NULL,
     std_response_time INTEGER NOT NULL,
     max_response_time INTEGER NOT NULL,
     retain_duration INTEGER NOT NULL,
     hook_level INTEGER NOT NULL,
     hook_addr TEXT NOT NULL,
-    hook_secret TEXT NOT NULL
+    hook_secret TEXT NOT NULL,
+    notification_email TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS uptime_result(
     id INTEGER REFERENCES uptime_watch_request(id),

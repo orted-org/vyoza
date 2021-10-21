@@ -14,18 +14,20 @@ import (
 
 func createRandomUptimeWatchRequest(t *testing.T) UptimeWatchRequest {
 	arg := AddUptimeWatchRequestParams{
-		Title:           util.RandomString(5),
-		Description:     util.RandomString(10),
-		Location:        util.RandomString(10),
-		Enabled:         util.RandomBool(),
-		Interval:        util.RandomInt(20, 60),
-		ExpectedStatus:  util.RandomInt(100, 600),
-		StdResponseTime: util.RandomInt(500, 1500),
-		MaxResponseTime: util.RandomInt(1501, 3000),
-		RetainDuration:  util.RandomInt(1000, 2000),
-		HookLevel:       util.RandomInt(1, 3),
-		HookAddress:     util.RandomString(10),
-		HookSecret:      string(util.NewSHA256([]byte(util.RandomString(20)))),
+		Title:             util.RandomString(5),
+		Description:       util.RandomString(10),
+		Location:          util.RandomString(10),
+		Enabled:           util.RandomBool(),
+		Interval:          util.RandomInt(20, 60),
+		SSLMonitor:        util.RandomBool(),
+		ExpectedStatus:    util.RandomInt(100, 600),
+		StdResponseTime:   util.RandomInt(500, 1500),
+		MaxResponseTime:   util.RandomInt(1501, 3000),
+		RetainDuration:    util.RandomInt(1000, 2000),
+		HookLevel:         util.RandomInt(1, 3),
+		HookAddress:       util.RandomString(10),
+		HookSecret:        string(util.NewSHA256([]byte(util.RandomString(20)))),
+		NotificationEmail: util.RandomString(10),
 	}
 
 	uwr, err := tq.AddUptimeWatchRequest(context.Background(), arg)
@@ -44,12 +46,14 @@ func createRandomUptimeWatchRequest(t *testing.T) UptimeWatchRequest {
 	require.Equal(t, arg.Enabled, uwr.Enabled)
 	require.WithinDuration(t, time.Now().UTC(), uwr.EnableUpdatedAt, time.Second)
 	require.Equal(t, arg.Interval, uwr.Interval)
+	require.Equal(t, arg.SSLMonitor, uwr.SSLMonitor)
 	require.Equal(t, arg.ExpectedStatus, uwr.ExpectedStatus)
 	require.Equal(t, arg.MaxResponseTime, uwr.MaxResponseTime)
 	require.Equal(t, arg.RetainDuration, uwr.RetainDuration)
 	require.Equal(t, arg.HookLevel, uwr.HookLevel)
 	require.Equal(t, arg.HookAddress, uwr.HookAddress)
 	require.Equal(t, arg.HookSecret, uwr.HookSecret)
+	require.Equal(t, arg.NotificationEmail, uwr.NotificationEmail)
 
 	return uwr
 }
@@ -83,12 +87,14 @@ func TestGetUptimeWatchRequestByID(t *testing.T) {
 	require.Equal(t, uwr.Enabled, incomingUWR.Enabled)
 	require.WithinDuration(t, time.Now().UTC(), incomingUWR.EnableUpdatedAt, time.Second)
 	require.Equal(t, uwr.Interval, incomingUWR.Interval)
+	require.Equal(t, uwr.SSLMonitor, incomingUWR.SSLMonitor)
 	require.Equal(t, uwr.ExpectedStatus, incomingUWR.ExpectedStatus)
 	require.Equal(t, uwr.MaxResponseTime, incomingUWR.MaxResponseTime)
 	require.Equal(t, uwr.RetainDuration, incomingUWR.RetainDuration)
 	require.Equal(t, uwr.HookLevel, incomingUWR.HookLevel)
 	require.Equal(t, uwr.HookAddress, incomingUWR.HookAddress)
 	require.Equal(t, uwr.HookSecret, incomingUWR.HookSecret)
+	require.Equal(t, uwr.NotificationEmail, incomingUWR.NotificationEmail)
 
 	deletingTheTestingData(t, incomingUWR.ID)
 }
@@ -146,12 +152,14 @@ func TestGetAllUptimeWatchRequest(t *testing.T) {
 			require.Equal(t, oneFromCreated.Enabled, i.Enabled)
 			require.WithinDuration(t, time.Now().UTC(), i.EnableUpdatedAt, time.Second)
 			require.Equal(t, oneFromCreated.Interval, i.Interval)
+			require.Equal(t, oneFromCreated.SSLMonitor, i.SSLMonitor)
 			require.Equal(t, oneFromCreated.ExpectedStatus, i.ExpectedStatus)
 			require.Equal(t, oneFromCreated.MaxResponseTime, i.MaxResponseTime)
 			require.Equal(t, oneFromCreated.RetainDuration, i.RetainDuration)
 			require.Equal(t, oneFromCreated.HookLevel, i.HookLevel)
 			require.Equal(t, oneFromCreated.HookAddress, i.HookAddress)
 			require.Equal(t, oneFromCreated.HookSecret, i.HookSecret)
+			require.Equal(t, oneFromCreated.NotificationEmail, i.NotificationEmail)
 		})
 	}
 
@@ -169,18 +177,20 @@ func TestUpdateUptimeWatchRequestById(t *testing.T) {
 		Title:       util.RandomString(10),
 		Description: util.RandomString(40),
 		HookLevel:   util.RandomInt(1, 3),
+		SSLMonitor:  util.RandomBool(),
 	}
 	updates["title"] = arg.Title
 	updates["description"] = arg.Description
 	updates["hook_level"] = arg.HookLevel
+	updates["ssl_monitor"] = arg.SSLMonitor
 
 	updated, err := tq.UpdateUptimeWatchRequestById(context.Background(), updates, i.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, updated)
 
-	require.Equal(t, updated.Title, arg.Title)
-	require.Equal(t, updated.Description, arg.Description)
-	require.Equal(t, updated.HookLevel, arg.HookLevel)
+	require.Equal(t, arg.Title, updated.Title)
+	require.Equal(t, arg.Description, updated.Description)
+	require.Equal(t, arg.HookLevel, updated.HookLevel)
+	require.Equal(t, arg.SSLMonitor, updated.SSLMonitor)
 	deletingTheTestingData(t, i.ID)
-
 }
