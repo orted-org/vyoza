@@ -100,6 +100,7 @@ func GetSSLCertificateDetails(url string, timeout int) (SSLCertificateDetails, e
 		if err != nil {
 			genRes.Remark = err.Error()
 		}
+		defer conn.Close()
 		genRes.IsValid = true
 		genRes.Remark = ""
 		genRes.Expiry = conn.ConnectionState().PeerCertificates[0].NotAfter
