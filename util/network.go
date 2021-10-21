@@ -103,7 +103,7 @@ func GetSSLCertificateDetails(url string, timeout int) SSLCertificateDetails {
 		defer conn.Close()
 		genRes.IsValid = true
 		genRes.Remark = conn.ConnectionState().PeerCertificates[0].Issuer.String()
-		genRes.Expiry = conn.ConnectionState().PeerCertificates[0].NotAfter
+		genRes.Expiry = conn.ConnectionState().PeerCertificates[0].NotAfter.UTC()
 		result <- genRes
 	}(result, &url)
 	select {
