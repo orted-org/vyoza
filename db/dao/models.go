@@ -21,20 +21,22 @@ type KeyValue struct {
 	HookSecret -> secret to send to the hook call to make safe hook call
 */
 type UptimeWatchRequest struct {
-	ID              int       `json:"id"`
-	Title           string    `json:"title"`
-	Description     string    `json:"description"`
-	Location        string    `json:"location"`
-	Enabled         bool      `json:"enabled"`
-	EnableUpdatedAt time.Time `json:"enable_updated_at"`
-	Interval        int       `json:"interval"`
-	ExpectedStatus  int       `json:"expected_status"`
-	StdResponseTime int       `json:"std_response_time"`
-	MaxResponseTime int       `json:"max_response_time"`
-	RetainDuration  int       `json:"retain_duration"`
-	HookLevel       int       `json:"hook_level"`
-	HookAddress     string    `json:"hook_address"`
-	HookSecret      string
+	ID                int       `json:"id"`
+	Title             string    `json:"title"`
+	Description       string    `json:"description"`
+	Location          string    `json:"location"`
+	Enabled           bool      `json:"enabled"`
+	EnableUpdatedAt   time.Time `json:"enable_updated_at"`
+	Interval          int       `json:"interval"`
+	SSLMonitor        bool      `json:"ssl_monitor"`
+	ExpectedStatus    int       `json:"expected_status"`
+	StdResponseTime   int       `json:"std_response_time"`
+	MaxResponseTime   int       `json:"max_response_time"`
+	RetainDuration    int       `json:"retain_duration"`
+	HookLevel         int       `json:"hook_level"`
+	HookAddress       string    `json:"hook_address"`
+	NotificationEmail string    `json:"notification_email"`
+	HookSecret        string
 }
 
 type UptimeResult struct {
