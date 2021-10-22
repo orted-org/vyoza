@@ -10,24 +10,21 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-
-
-
 func createRandomUptimeSSLInfo(t *testing.T) UptimeSSLInfo {
-	uwr := createRandomUptimeWatchRequest(t);
+	uwr := createRandomUptimeWatchRequest(t)
 	arg := UptimeSSLInfo{
-		UWRId: uwr.ID,
-		IsValid: util.RandomBool(),
+		UWRID:      uwr.ID,
+		IsValid:    util.RandomBool(),
 		ExpiryDate: time.Now().AddDate(0, 0, 5).UTC(),
-		Remark: util.RandomString(10),
-		UpdatedAt: time.Now().UTC(),
+		Remark:     util.RandomString(10),
+		UpdatedAt:  time.Now().UTC(),
 	}
 
-	createdUptimeSSLInfo, err := tq.AddUptimeSSLInfo(context.Background(),arg);
+	createdUptimeSSLInfo, err := tq.AddUptimeSSLInfo(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, createdUptimeSSLInfo)
 
-	require.Equal(t, arg.UWRId, createdUptimeSSLInfo.UWRId)
+	require.Equal(t, arg.UWRID, createdUptimeSSLInfo.UWRID)
 	require.Equal(t, arg.IsValid, createdUptimeSSLInfo.IsValid)
 	require.Equal(t, arg.ExpiryDate, createdUptimeSSLInfo.ExpiryDate)
 	require.Equal(t, arg.Remark, createdUptimeSSLInfo.Remark)
@@ -35,56 +32,56 @@ func createRandomUptimeSSLInfo(t *testing.T) UptimeSSLInfo {
 	return createdUptimeSSLInfo
 }
 
-func TestAddUptimeSSLInfo(t *testing.T){
-	createRandomUptimeSSLInfo(t);
+func TestAddUptimeSSLInfo(t *testing.T) {
+	createRandomUptimeSSLInfo(t)
 }
 
-func TestDeleteUptimeSSLInfoByUWRID(t *testing.T){
+func TestDeleteUptimeSSLInfoByUWRID(t *testing.T) {
 	usi := createRandomUptimeSSLInfo(t)
-	delErr := tq.DeleteUptimeSSLInfoByUWRID(context.Background(), usi.UWRId)
+	delErr := tq.DeleteUptimeSSLInfoByUWRID(context.Background(), usi.UWRID)
 
-	require.NoError(t, delErr);
+	require.NoError(t, delErr)
 
-	incomingUsi, err := tq.GetUptimeSSLInfoByUWRID(context.Background(), usi.UWRId)
+	incomingUsi, err := tq.GetUptimeSSLInfoByUWRID(context.Background(), usi.UWRID)
 	require.Error(t, err)
 	require.Empty(t, incomingUsi)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 }
 
-func TestUpdateUptimeSSLInfoByUWRID(t *testing.T){
-	usi := createRandomUptimeSSLInfo(t);
-	
+func TestUpdateUptimeSSLInfoByUWRID(t *testing.T) {
+	usi := createRandomUptimeSSLInfo(t)
+
 	updatedUsiArg := UptimeSSLInfo{
-		UWRId: usi.UWRId,
-		IsValid: util.RandomBool(),
+		UWRID:      usi.UWRID,
+		IsValid:    util.RandomBool(),
 		ExpiryDate: time.Now().AddDate(0, 0, 10).UTC(),
-		Remark: util.RandomString(10),
-		UpdatedAt: time.Now().UTC(),
+		Remark:     util.RandomString(10),
+		UpdatedAt:  time.Now().UTC(),
 	}
-	incomingUsi, err := tq.UpdateUptimeSSLInfoByUWRID(context.Background(),updatedUsiArg)
+	incomingUsi, err := tq.UpdateUptimeSSLInfoByUWRID(context.Background(), updatedUsiArg)
 	require.NoError(t, err)
 	require.NotEmpty(t, incomingUsi)
 
-	require.Equal(t, updatedUsiArg.UWRId, incomingUsi.UWRId)
+	require.Equal(t, updatedUsiArg.UWRID, incomingUsi.UWRID)
 	require.Equal(t, updatedUsiArg.IsValid, incomingUsi.IsValid)
 	require.Equal(t, updatedUsiArg.ExpiryDate, incomingUsi.ExpiryDate)
 	require.Equal(t, updatedUsiArg.Remark, incomingUsi.Remark)
 	require.Equal(t, updatedUsiArg.UpdatedAt, incomingUsi.UpdatedAt)
 }
 
-func TestGetUptimeSSLInfoByUWRID(t *testing.T){
-	usi := createRandomUptimeSSLInfo(t);
-	incomingUsi, err := tq.GetUptimeSSLInfoByUWRID(context.Background(),usi.UWRId)
+func TestGetUptimeSSLInfoByUWRID(t *testing.T) {
+	usi := createRandomUptimeSSLInfo(t)
+	incomingUsi, err := tq.GetUptimeSSLInfoByUWRID(context.Background(), usi.UWRID)
 	require.NoError(t, err)
 	require.NotEmpty(t, incomingUsi)
-	require.Equal(t, usi.UWRId, incomingUsi.UWRId)
+	require.Equal(t, usi.UWRID, incomingUsi.UWRID)
 	require.Equal(t, usi.IsValid, incomingUsi.IsValid)
 	require.Equal(t, usi.ExpiryDate, incomingUsi.ExpiryDate)
 	require.Equal(t, usi.Remark, incomingUsi.Remark)
 	require.Equal(t, usi.UpdatedAt, incomingUsi.UpdatedAt)
 }
 
-func TestGetAllUptimeSSLInfo(t *testing.T){
+func TestGetAllUptimeSSLInfo(t *testing.T) {
 	n := 10
 	var insertedUSI []UptimeSSLInfo
 	for i := 0; i < n; i++ {
@@ -106,11 +103,11 @@ func TestGetAllUptimeSSLInfo(t *testing.T){
 		}
 		for _, insertedUSI := range insertedUSI {
 			for _, incmgUSI := range incomingUSIGroup {
-				if insertedUSI.UWRId == incmgUSI.UWRId {
+				if insertedUSI.UWRID == incmgUSI.UWRID {
 					//matched
 					matchedCount++
 					//Checking the equality of fields
-					require.Equal(t, insertedUSI.UWRId, incmgUSI.UWRId)
+					require.Equal(t, insertedUSI.UWRID, incmgUSI.UWRID)
 					require.Equal(t, insertedUSI.IsValid, incmgUSI.IsValid)
 					require.Equal(t, insertedUSI.ExpiryDate, incmgUSI.ExpiryDate)
 					require.Equal(t, insertedUSI.Remark, incmgUSI.Remark)

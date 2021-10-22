@@ -19,7 +19,7 @@ func createRandomUptimeConclusion(t *testing.T) UptimeConclusion {
 			randomResponeTime = -1
 		}
 		arg := AddUptimeResultParams{
-			ID:           uwr.ID,
+			UWRID:        uwr.ID,
 			ResponseTime: randomResponeTime,
 			Remark:       util.RandomString(10),
 		}
@@ -30,7 +30,7 @@ func createRandomUptimeConclusion(t *testing.T) UptimeConclusion {
 	require.NoError(t, err)
 
 	var uc UptimeConclusion
-	uc.UWRId = stateEx1.ID
+	uc.UWRID = stateEx1.UWRID
 	uc.SuccessCount = stateEx1.SuccessCount
 	uc.WarningCount = stateEx1.WarningCount
 	uc.ErrorCount = stateEx1.ErrorCount
@@ -46,7 +46,7 @@ func createRandomUptimeConclusion(t *testing.T) UptimeConclusion {
 	require.NoError(t, err)
 	require.NotEmpty(t, inuc)
 
-	require.Equal(t, uc.UWRId, inuc.UWRId)
+	require.Equal(t, uc.UWRID, inuc.UWRID)
 	require.Equal(t, uc.SuccessCount, inuc.SuccessCount)
 	require.Equal(t, uc.WarningCount, inuc.WarningCount)
 	require.Equal(t, uc.ErrorCount, inuc.ErrorCount)
@@ -66,12 +66,12 @@ func TestAddUptimeConclusion(t *testing.T) {
 
 func TestGetUptimeConclusionByUWRID(t *testing.T) {
 	uc := createRandomUptimeConclusion(t)
-	inuc, err := tq.GetUptimeConclusionByUWRID(context.Background(), uc.UWRId)
+	inuc, err := tq.GetUptimeConclusionByUWRID(context.Background(), uc.UWRID)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, inuc)
 
-	require.Equal(t, uc.UWRId, inuc.UWRId)
+	require.Equal(t, uc.UWRID, inuc.UWRID)
 	require.Equal(t, uc.SuccessCount, inuc.SuccessCount)
 	require.Equal(t, uc.WarningCount, inuc.WarningCount)
 	require.Equal(t, uc.ErrorCount, inuc.ErrorCount)
@@ -85,11 +85,11 @@ func TestGetUptimeConclusionByUWRID(t *testing.T) {
 
 func TestDeleteUptimeConclusionByUWRID(t *testing.T) {
 	uc := createRandomUptimeConclusion(t)
-	err := tq.DeleteUptimeConclusionByUWRID(context.Background(), uc.UWRId)
+	err := tq.DeleteUptimeConclusionByUWRID(context.Background(), uc.UWRID)
 
 	require.NoError(t, err)
 
-	inuc, getErr := tq.GetUptimeConclusionByUWRID(context.Background(), uc.UWRId)
+	inuc, getErr := tq.GetUptimeConclusionByUWRID(context.Background(), uc.UWRID)
 	require.Error(t, getErr)
 	require.Empty(t, inuc)
 	require.EqualError(t, getErr, sql.ErrNoRows.Error())
@@ -124,11 +124,11 @@ func TestGetAllUptimeConclusion(t *testing.T) {
 		}
 		for _, insrtUC := range insertedUCs {
 			for _, incmgUC := range incomingUCGroup {
-				if insrtUC.UWRId == incmgUC.UWRId {
+				if insrtUC.UWRID == incmgUC.UWRID {
 					//matched
 					matchedCount++
 					//Checking the equality of fields
-					require.Equal(t, insrtUC.UWRId, incmgUC.UWRId)
+					require.Equal(t, insrtUC.UWRID, incmgUC.UWRID)
 					require.Equal(t, insrtUC.SuccessCount, incmgUC.SuccessCount)
 					require.Equal(t, insrtUC.WarningCount, incmgUC.WarningCount)
 					require.Equal(t, insrtUC.ErrorCount, incmgUC.ErrorCount)

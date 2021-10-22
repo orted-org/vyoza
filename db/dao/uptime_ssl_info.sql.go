@@ -25,18 +25,18 @@ RETURNING
 
 func (q *Queries) AddUptimeSSLInfo(ctx context.Context, arg UptimeSSLInfo) (UptimeSSLInfo, error) {
 	row := q.queryRow(
-        ctx,
-        q.addUptimeSSLInfo,
-        addUptimeSSLInfo,
-        arg.UWRId,
-        arg.IsValid,
-        arg.ExpiryDate,
-        arg.Remark,
-        arg.UpdatedAt,
+		ctx,
+		q.addUptimeSSLInfo,
+		addUptimeSSLInfo,
+		arg.UWRID,
+		arg.IsValid,
+		arg.ExpiryDate,
+		arg.Remark,
+		arg.UpdatedAt,
 	)
 	var i UptimeSSLInfo
 	err := row.Scan(
-		&i.UWRId,
+		&i.UWRID,
 		&i.IsValid,
 		&i.ExpiryDate,
 		&i.Remark,
@@ -51,8 +51,9 @@ DELETE FROM
 WHERE 
     uwr_id = ?;
 `
-func (q *Queries) DeleteUptimeSSLInfoByUWRID(ctx context.Context, uwr_id int) error {
-	_, err := q.exec(ctx, q.deleteUptimeSSLInfoByUWRID, deleteUptimeSSLInfoByUWRID, uwr_id)
+
+func (q *Queries) DeleteUptimeSSLInfoByUWRID(ctx context.Context, UWRID int) error {
+	_, err := q.exec(ctx, q.deleteUptimeSSLInfoByUWRID, deleteUptimeSSLInfoByUWRID, UWRID)
 	return err
 }
 
@@ -74,21 +75,20 @@ RETURNING
     updated_at;
 `
 
-
 func (q *Queries) UpdateUptimeSSLInfoByUWRID(ctx context.Context, arg UptimeSSLInfo) (UptimeSSLInfo, error) {
 	row := q.queryRow(
-        ctx,
-        q.updateUptimeSSLInfoByUWRID,
-        updateUptimeSSLInfoByUWRID,
-        arg.IsValid,
-        arg.ExpiryDate,
-        arg.Remark,
-        arg.UpdatedAt,
-        arg.UWRId,
+		ctx,
+		q.updateUptimeSSLInfoByUWRID,
+		updateUptimeSSLInfoByUWRID,
+		arg.IsValid,
+		arg.ExpiryDate,
+		arg.Remark,
+		arg.UpdatedAt,
+		arg.UWRID,
 	)
 	var i UptimeSSLInfo
 	err := row.Scan(
-		&i.UWRId,
+		&i.UWRID,
 		&i.IsValid,
 		&i.ExpiryDate,
 		&i.Remark,
@@ -109,16 +109,17 @@ FROM
 WHERE
     uwr_id = ?;
 `
-func (q *Queries) GetUptimeSSLInfoByUWRID(ctx context.Context, uwr_id int) (UptimeSSLInfo, error) {
+
+func (q *Queries) GetUptimeSSLInfoByUWRID(ctx context.Context, UWRID int) (UptimeSSLInfo, error) {
 	row := q.queryRow(
-        ctx,
-        q.getUptimeSSLInfoByUWRID,
-        getUptimeSSLInfoByUWRID,
-        uwr_id,
+		ctx,
+		q.getUptimeSSLInfoByUWRID,
+		getUptimeSSLInfoByUWRID,
+		UWRID,
 	)
 	var i UptimeSSLInfo
 	err := row.Scan(
-		&i.UWRId,
+		&i.UWRID,
 		&i.IsValid,
 		&i.ExpiryDate,
 		&i.Remark,
@@ -139,6 +140,7 @@ FROM
 LIMIT ?
 OFFSET ?;
 `
+
 type getAllUptimeSSLInfoParams struct {
 	Limit  int `json:"limit"`
 	Offset int `json:"offset"`
@@ -154,11 +156,11 @@ func (q *Queries) GetAllUptimeSSLInfo(ctx context.Context, arg getAllUptimeSSLIn
 	for rows.Next() {
 		var i UptimeSSLInfo
 		if err := rows.Scan(
-            &i.UWRId,
-            &i.IsValid,
-            &i.ExpiryDate,
-            &i.Remark,
-            &i.UpdatedAt,
+			&i.UWRID,
+			&i.IsValid,
+			&i.ExpiryDate,
+			&i.Remark,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -172,5 +174,3 @@ func (q *Queries) GetAllUptimeSSLInfo(ctx context.Context, arg getAllUptimeSSLIn
 	}
 	return items, nil
 }
-
-

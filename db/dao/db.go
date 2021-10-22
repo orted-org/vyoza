@@ -304,21 +304,21 @@ type Store interface {
 
 	// uptime result
 	AddUptimeResult(ctx context.Context, arg AddUptimeResultParams) (UptimeResult, error)
-	GetUptimeResultCount(ctx context.Context, arg int) (int, error)
+	GetUptimeResultCount(ctx context.Context, UWRID int) (int, error)
 	GetUptimeResults(ctx context.Context, arg GetUptimeResultsParams) ([]UptimeResult, error)
-	DeleteUptimeResults(ctx context.Context, id int) error
-	GetUptimeResultStatsForID(ctx context.Context, id int) (UptimeResultStats, error)
+	DeleteUptimeResults(ctx context.Context, UWRID int) error
+	GetUptimeResultStatsForID(ctx context.Context, UWRID int) (UptimeResultStats, error)
 
 	// uptime conclusion
 	AddUptimeConclusion(ctx context.Context, arg UptimeConclusion) (UptimeConclusion, error)
-	DeleteUptimeConclusionByUWRID(ctx context.Context, uwr_id int) error
-	GetUptimeConclusionByUWRID(ctx context.Context, uwr_id int) (UptimeConclusion, error)
+	DeleteUptimeConclusionByUWRID(ctx context.Context, UWRID int) error
+	GetUptimeConclusionByUWRID(ctx context.Context, UWRID int) (UptimeConclusion, error)
 	GetAllUptimeConclusion(ctx context.Context, arg getAllUptimeConclusionParams) ([]UptimeConclusion, error)
 
 	// ssl info
 	AddUptimeSSLInfo(ctx context.Context, arg UptimeSSLInfo) (UptimeSSLInfo, error)
-	DeleteUptimeSSLInfoByUWRID(ctx context.Context, uwr_id int) error
+	DeleteUptimeSSLInfoByUWRID(ctx context.Context, UWRID int) error
 	UpdateUptimeSSLInfoByUWRID(ctx context.Context, arg UptimeSSLInfo) (UptimeSSLInfo, error)
-	GetUptimeSSLInfoByUWRID(ctx context.Context, uwr_id int) (UptimeSSLInfo, error)
+	GetUptimeSSLInfoByUWRID(ctx context.Context, UWRID int) (UptimeSSLInfo, error)
 	GetAllUptimeSSLInfo(ctx context.Context, arg getAllUptimeSSLInfoParams) ([]UptimeSSLInfo, error)
 }

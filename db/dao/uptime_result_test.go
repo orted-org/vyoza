@@ -17,7 +17,7 @@ func createRamdomUptimeResult(t *testing.T) UptimeResult {
 		randomResponeTime = -1
 	}
 	arg := AddUptimeResultParams{
-		ID:           uwr.ID,
+		UWRID:        uwr.ID,
 		ResponseTime: randomResponeTime,
 		Remark:       util.RandomString(10),
 	}
@@ -27,9 +27,9 @@ func createRamdomUptimeResult(t *testing.T) UptimeResult {
 	require.NotEmpty(t, i)
 
 	require.NotZero(t, i.CreatedAt)
-	require.Equal(t, uwr.ID, i.ID)
+	require.Equal(t, uwr.ID, i.UWRID)
 	require.Equal(t, i.ResponseTime, arg.ResponseTime)
-	require.Equal(t,arg.Remark, i.Remark)
+	require.Equal(t, arg.Remark, i.Remark)
 	return i
 }
 func TestAddUptimeResult(t *testing.T) {
@@ -38,7 +38,7 @@ func TestAddUptimeResult(t *testing.T) {
 
 func TestGetUptimeResultCount(t *testing.T) {
 	i := createRamdomUptimeResult(t)
-	c, err := tq.GetUptimeResultCount(context.Background(), i.ID)
+	c, err := tq.GetUptimeResultCount(context.Background(), i.UWRID)
 	require.NoError(t, err)
 	require.NotEmpty(t, c)
 	require.NotZero(t, c)
@@ -57,7 +57,7 @@ func TestGetUptimeResults(t *testing.T) {
 			randomResponeTime = -1
 		}
 		arg := AddUptimeResultParams{
-			ID:           uwr.ID,
+			UWRID:        uwr.ID,
 			ResponseTime: randomResponeTime,
 			Remark:       util.RandomString(10),
 		}
@@ -71,7 +71,7 @@ func TestGetUptimeResults(t *testing.T) {
 	i := 0
 	for {
 		res, err := tq.GetUptimeResults(context.Background(), GetUptimeResultsParams{
-			ID:     uwr.ID,
+			UWRID:  uwr.ID,
 			Offset: i * 2,
 			Limit:  2,
 		})
@@ -104,7 +104,7 @@ func TestDeleteUptimeResults(t *testing.T) {
 			randomResponeTime = -1
 		}
 		arg := AddUptimeResultParams{
-			ID:           uwr.ID,
+			UWRID:        uwr.ID,
 			ResponseTime: randomResponeTime,
 			Remark:       util.RandomString(10),
 		}
@@ -121,7 +121,7 @@ func TestDeleteUptimeResults(t *testing.T) {
 	i := 0
 	for {
 		res, err := tq.GetUptimeResults(context.Background(), GetUptimeResultsParams{
-			ID:     uwr.ID,
+			UWRID:  uwr.ID,
 			Offset: i * 2,
 			Limit:  2,
 		})
@@ -145,7 +145,7 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 	n := 10
 	uwr := createRandomUptimeWatchRequest(t)
 	mustStats := UptimeResultStats{}
-	mustStats.ID = uwr.ID
+	mustStats.UWRID = uwr.ID
 	successRespSum := 0
 	warningRespSum := 0
 	successRespCnt := 0
@@ -157,7 +157,7 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 			randomResponeTime = -1
 		}
 		arg := AddUptimeResultParams{
-			ID:           uwr.ID,
+			UWRID:        uwr.ID,
 			ResponseTime: randomResponeTime,
 			Remark:       util.RandomString(10),
 		}
@@ -202,7 +202,7 @@ func TestGetUptimeResultStatsForID(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, inStats)
 
-	require.Equal(t, mustStats.ID, inStats.ID)
+	require.Equal(t, mustStats.UWRID, inStats.UWRID)
 
 	require.Equal(t, mustStats.SuccessCount, inStats.SuccessCount)
 	require.Equal(t, mustStats.WarningCount, inStats.WarningCount)

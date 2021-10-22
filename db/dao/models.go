@@ -42,14 +42,14 @@ type UptimeWatchRequest struct {
 }
 
 type UptimeResult struct {
-	ID           int       `json:"id"`
+	UWRID        int       `json:"uwr_id"`
 	ResponseTime int       `json:"response_time"`
 	Remark       string    `json:"remark"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 
 type UptimeResultStats struct {
-	ID                     int       `json:"id"`
+	UWRID                  int       `json:"uwr_id"`
 	SuccessCount           int       `json:"success_count"`
 	WarningCount           int       `json:"warning_count"`
 	ErrorCount             int       `json:"error_count"`
@@ -62,7 +62,7 @@ type UptimeResultStats struct {
 }
 
 type UptimeConclusion struct {
-	UWRId                  int       `json:"uwr_id"`
+	UWRID                  int       `json:"uwr_id"`
 	SuccessCount           int       `json:"success_count"`
 	WarningCount           int       `json:"warning_count"`
 	ErrorCount             int       `json:"error_count"`
@@ -75,7 +75,7 @@ type UptimeConclusion struct {
 }
 
 type UptimeSSLInfo struct {
-	UWRId      int       `json:"uwr_id"`
+	UWRID      int       `json:"uwr_id"`
 	IsValid    bool      `json:"is_valid"`
 	ExpiryDate time.Time `json:"expiry_date"`
 	Remark     string    `json:"remark"`

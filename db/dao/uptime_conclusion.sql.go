@@ -35,7 +35,7 @@ func (q *Queries) AddUptimeConclusion(ctx context.Context, arg UptimeConclusion)
 		ctx,
 		q.addUptimeConclusion,
 		addUptimeConclusion,
-		arg.UWRId,
+		arg.UWRID,
 		arg.SuccessCount,
 		arg.WarningCount,
 		arg.ErrorCount,
@@ -48,7 +48,7 @@ func (q *Queries) AddUptimeConclusion(ctx context.Context, arg UptimeConclusion)
 	)
 	var i UptimeConclusion
 	err := row.Scan(
-		&i.UWRId,
+		&i.UWRID,
 		&i.SuccessCount,
 		&i.WarningCount,
 		&i.ErrorCount,
@@ -91,7 +91,7 @@ func (q *Queries) GetUptimeConclusionByUWRID(ctx context.Context, uwr_id int) (U
 	row := q.queryRow(ctx, q.getUptimeConclusionByUWRID, getUptimeConclusionByUWRID, uwr_id)
 	var i UptimeConclusion
 	err := row.Scan(
-		&i.UWRId,
+		&i.UWRID,
 		&i.SuccessCount,
 		&i.WarningCount,
 		&i.ErrorCount,
@@ -137,7 +137,7 @@ func (q *Queries) GetAllUptimeConclusion(ctx context.Context, arg getAllUptimeCo
 	for rows.Next() {
 		var i UptimeConclusion
 		if err := rows.Scan(
-			&i.UWRId,
+			&i.UWRID,
 			&i.SuccessCount,
 			&i.WarningCount,
 			&i.ErrorCount,
