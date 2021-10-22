@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS uptime_watch_request(
     notification_email TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS uptime_result(
-    id INTEGER REFERENCES uptime_watch_request(id),
+    uwr_id INTEGER REFERENCES uptime_watch_request(id),
     response_time INTEGER NOT NULL,
     remark TEXT NOT NULL,
     created_at TIMESTAMP
