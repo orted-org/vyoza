@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS uptime_watch_request(
     enable_updated_at TIMESTAMP NOT NULL,
     interval INTEGER NOT NULL,
     ssl_monitor BOOLEAN NOT NULL,
+    ssl_interval INTEGER NOT NULL,
+    ssl_expiry_notification INTEGER NOT NULL,
     expected_status INTEGER NOT NULL,
     std_response_time INTEGER NOT NULL,
     max_response_time INTEGER NOT NULL,
@@ -39,7 +41,6 @@ CREATE TABLE IF NOT EXISTS uptime_conclusion (
     start_date TIMESTAMP,
     end_date TIMESTAMP
 );
-
 CREATE TABLE IF NOT EXISTS uptime_ssl_info (
     uwr_id INTEGER UNIQUE REFERENCES uptime_watch_request(id),
     is_valid BOOLEAN NOT NULL,
@@ -47,4 +48,3 @@ CREATE TABLE IF NOT EXISTS uptime_ssl_info (
     remark TEXT NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
-
