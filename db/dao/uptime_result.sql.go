@@ -8,25 +8,25 @@ import (
 )
 
 const addUptimeResult = `
-INSERT INTO uptime_result(id, response_time, remark, created_at)
+INSERT INTO uptime_result(uwr_id, response_time, remark, created_at)
 VALUES(?, ?, ?, ?)
-RETURNING id,
+RETURNING uwr_id,
     response_time,
 	remark,
     created_at
 `
 
 type AddUptimeResultParams struct {
-	ID           int
+	UWRID        int
 	Remark       string
 	ResponseTime int
 }
 
 func (q *Queries) AddUptimeResult(ctx context.Context, arg AddUptimeResultParams) (UptimeResult, error) {
-	row := q.queryRow(ctx, q.addUptimeResult, addUptimeResult, arg.ID, arg.ResponseTime, arg.Remark, time.Now().UTC())
+	row := q.queryRow(ctx, q.addUptimeResult, addUptimeResult, arg.UWRID, arg.ResponseTime, arg.Remark, time.Now().UTC())
 	var i UptimeResult
 	err := row.Scan(
-		&i.ID,
+		&i.UWRID,
 		&i.ResponseTime,
 		&i.Remark,
 		&i.CreatedAt,
@@ -36,11 +36,11 @@ func (q *Queries) AddUptimeResult(ctx context.Context, arg AddUptimeResultParams
 
 const getUptimeResultCount = `
 SELECT count(*) FROM uptime_result
-WHERE id = ?
+WHERE uwr_id = ?
 `
 
-func (q *Queries) GetUptimeResultCount(ctx context.Context, arg int) (int, error) {
-	row := q.queryRow(ctx, q.getUptimeResultCount, getUptimeResultCount, arg)
+func (q *Queries) GetUptimeResultCount(ctx context.Context, UWRID int) (int, error) {
+	row := q.queryRow(ctx, q.getUptimeResultCount, getUptimeResultCount, UWRID)
 	var i int
 	err := row.Scan(
 		&i,
@@ -49,23 +49,23 @@ func (q *Queries) GetUptimeResultCount(ctx context.Context, arg int) (int, error
 }
 
 const getUptimeResults = `
-SELECT id,
+SELECT uwr_id,
     response_time,
 	remark,
     created_at
 FROM uptime_result
-WHERE id = ?
+WHERE uwr_id = ?
 LIMIT ? OFFSET ?
 `
 
 type GetUptimeResultsParams struct {
-	ID     int
+	UWRID  int
 	Limit  int
 	Offset int
 }
 
 func (q *Queries) GetUptimeResults(ctx context.Context, arg GetUptimeResultsParams) ([]UptimeResult, error) {
-	rows, err := q.query(ctx, q.getUptimeResults, getUptimeResults, arg.ID, arg.Limit, arg.Offset)
+	rows, err := q.query(ctx, q.getUptimeResults, getUptimeResults, arg.UWRID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (q *Queries) GetUptimeResults(ctx context.Context, arg GetUptimeResultsPara
 	for rows.Next() {
 		var i UptimeResult
 		if err := rows.Scan(
-			&i.ID,
+			&i.UWRID,
 			&i.ResponseTime,
 			&i.Remark,
 			&i.CreatedAt,
@@ -94,16 +94,16 @@ func (q *Queries) GetUptimeResults(ctx context.Context, arg GetUptimeResultsPara
 
 const deleteUptimeResults = `
 DELETE FROM uptime_result
-WHERE id = ?
+WHERE uwr_id = ?
 `
 
-func (q *Queries) DeleteUptimeResults(ctx context.Context, id int) error {
-	_, err := q.exec(ctx, q.deleteUptimeResults, deleteUptimeResults, id)
+func (q *Queries) DeleteUptimeResults(ctx context.Context, UWRID int) error {
+	_, err := q.exec(ctx, q.deleteUptimeResults, deleteUptimeResults, UWRID)
 	return err
 }
 
 const getUptimeResultStatsForID = `
-SELECT uptime_result.id,
+SELECT uptime_result.uwr_id,
     count(
         CASE
             WHEN response_time > -1
@@ -156,17 +156,17 @@ SELECT uptime_result.id,
     min(created_at) AS start_date,
     max(created_at) AS end_date
 FROM uptime_result
-    INNER JOIN uptime_watch_request ON uptime_watch_request.id = uptime_result.id
+    INNER JOIN uptime_watch_request ON uptime_watch_request.id = uptime_result.uwr_id
 WHERE uptime_watch_request.id = ?
 `
 
-func (q *Queries) GetUptimeResultStatsForID(ctx context.Context, id int) (UptimeResultStats, error) {
-	row := q.queryRow(ctx, q.getUptimeResultStatsForID, getUptimeResultStatsForID, id)
+func (q *Queries) GetUptimeResultStatsForID(ctx context.Context, UWRID int) (UptimeResultStats, error) {
+	row := q.queryRow(ctx, q.getUptimeResultStatsForID, getUptimeResultStatsForID, UWRID)
 	var i UptimeResultStats
 	var startDate string
 	var endDate string
 	err := row.Scan(
-		&i.ID,
+		&i.UWRID,
 		&i.SuccessCount,
 		&i.WarningCount,
 		&i.ErrorCount,
