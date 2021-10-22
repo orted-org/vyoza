@@ -314,4 +314,11 @@ type Store interface {
 	DeleteUptimeConclusionByUWRID(ctx context.Context, uwr_id int) error
 	GetUptimeConclusionByUWRID(ctx context.Context, uwr_id int) (UptimeConclusion, error)
 	GetAllUptimeConclusion(ctx context.Context, arg getAllUptimeConclusionParams) ([]UptimeConclusion, error)
+
+	// ssl info
+	AddUptimeSSLInfo(ctx context.Context, arg UptimeSSLInfo) (UptimeSSLInfo, error)
+	DeleteUptimeSSLInfoByUWRID(ctx context.Context, uwr_id int) error
+	UpdateUptimeSSLInfoByUWRID(ctx context.Context, arg UptimeSSLInfo) (UptimeSSLInfo, error)
+	GetUptimeSSLInfoByUWRID(ctx context.Context, uwr_id int) (UptimeSSLInfo, error)
+	GetAllUptimeSSLInfo(ctx context.Context, arg getAllUptimeSSLInfoParams) ([]UptimeSSLInfo, error)
 }
