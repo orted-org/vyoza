@@ -39,3 +39,12 @@ CREATE TABLE IF NOT EXISTS uptime_conclusion (
     start_date TIMESTAMP,
     end_date TIMESTAMP
 )
+
+CREATE TABLE IF NOT EXISTS uptime_ssl_info (
+    uwr_id INTEGER UNIQUE REFERENCES uptime_watch_request(id),
+    is_valid BOOLEAN NOT NULL,
+    expiry_date TIMESTAMP NOT NULL,
+    remark TEXT NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
