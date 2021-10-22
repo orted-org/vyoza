@@ -10,7 +10,9 @@ func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
-const alphabet = "abcdefghijklmnopqrstuvwxyz"
+const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const numbers = "0123456789"
+const alphaNumeric = numbers + alphabet
 
 func RandomInt(min, max int64) int {
 	return int(min + rand.Int63n(max-min+1))
@@ -32,4 +34,13 @@ func RandomBool() bool {
 	} else {
 		return true
 	}
+}
+
+func RandomAlphaNumeric(size int) string {
+	var sb strings.Builder
+	k := len(alphabet)
+	for i := 0; i < size; i++ {
+		sb.WriteByte(alphaNumeric[rand.Intn(k)])
+	}
+	return sb.String()
 }
