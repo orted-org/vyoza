@@ -79,6 +79,24 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 	if q.getAllUptimeConclusion, err = db.PrepareContext(ctx, getAllUptimeConclusion); err != nil {
 		return nil, fmt.Errorf("error preparing query getAllUptimeConclusion: %w", err)
 	}
+
+	//uptime ssl info
+	if q.addUptimeSSLInfo, err = db.PrepareContext(ctx, addUptimeSSLInfo); err != nil {
+		return nil, fmt.Errorf("error preparing query addUptimeSSLInfo: %w", err)
+	}
+	if q.deleteUptimeSSLInfoByUWRID, err = db.PrepareContext(ctx, deleteUptimeSSLInfoByUWRID); err != nil {
+		return nil, fmt.Errorf("error preparing query deleteUptimeSSLInfoByUWRID: %w", err)
+	}
+	if q.updateUptimeSSLInfoByUWRID, err = db.PrepareContext(ctx, updateUptimeSSLInfoByUWRID); err != nil {
+		return nil, fmt.Errorf("error preparing query updateUptimeSSLInfoByUWRID: %w", err)
+	}
+	if q.getUptimeSSLInfoByUWRID, err = db.PrepareContext(ctx, getUptimeSSLInfoByUWRID); err != nil {
+		return nil, fmt.Errorf("error preparing query getUptimeSSLInfoByUWRID: %w", err)
+	}
+	if q.getAllUptimeSSLInfo, err = db.PrepareContext(ctx, getAllUptimeSSLInfo); err != nil {
+		return nil, fmt.Errorf("error preparing query getAllUptimeSSLInfo: %w", err)
+	}
+
 	return &q, nil
 }
 
@@ -177,6 +195,33 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getAllUptimeConclusion: %w", cerr)
 		}
 	}
+
+	//uptime ssl info
+	if q.addUptimeSSLInfo != nil {
+		if cerr := q.addUptimeSSLInfo.Close(); cerr != nil {
+			err = fmt.Errorf("error closing addUptimeSSLInfo: %w", cerr)
+		}
+	}
+	if q.deleteUptimeSSLInfoByUWRID != nil {
+		if cerr := q.deleteUptimeSSLInfoByUWRID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteUptimeSSLInfoByUWRID: %w", cerr)
+		}
+	}
+	if q.updateUptimeSSLInfoByUWRID != nil {
+		if cerr := q.updateUptimeSSLInfoByUWRID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateUptimeSSLInfoByUWRID: %w", cerr)
+		}
+	}
+	if q.getUptimeSSLInfoByUWRID != nil {
+		if cerr := q.getUptimeSSLInfoByUWRID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUptimeSSLInfoByUWRID: %w", cerr)
+		}
+	}
+	if q.getAllUptimeSSLInfo != nil {
+		if cerr := q.getAllUptimeSSLInfo.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAllUptimeSSLInfo: %w", cerr)
+		}
+	}
 	return err
 }
 
@@ -234,6 +279,13 @@ type Queries struct {
 	deleteUptimeConclusionByUWRID *sql.Stmt
 	getUptimeConclusionByUWRID    *sql.Stmt
 	getAllUptimeConclusion        *sql.Stmt
+
+	//uptime SSL info
+	addUptimeSSLInfo           *sql.Stmt
+	deleteUptimeSSLInfoByUWRID *sql.Stmt
+	updateUptimeSSLInfoByUWRID *sql.Stmt
+	getUptimeSSLInfoByUWRID    *sql.Stmt
+	getAllUptimeSSLInfo        *sql.Stmt
 }
 
 type Store interface {
