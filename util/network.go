@@ -79,8 +79,8 @@ func GetSSLCertificateDetails(url string, timeout int) SSLCertificateDetails {
 	select {
 	case <-ctx.Done():
 		return SSLCertificateDetails{IsValid: false, Remark: ErrTLSRequestTimeoutExceeded.Error()}
-	case <-result:
-		return <-result
+	case data := <-result:
+		return data
 	}
 }
 
@@ -91,4 +91,3 @@ func convertURLToTLSURI(url string) string {
 	}
 	return strings.Split(url, ":")[0] + ":443"
 }
-
