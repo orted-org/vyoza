@@ -71,3 +71,11 @@ type UptimeConclusion struct {
 	StartDate              time.Time `json:"start_date"`
 	EndDate                time.Time `json:"end_date"`
 }
+
+type UptimeSSLInfo struct {
+	UWRId int `json:"uwr_id"`
+	IsValid bool `json:"is_valid"`
+	ExpiryDate time.Time `json:"expiry_date"`
+	Remark string `json:"remark"`
+	UpdatedAt time.Time `json:"updated_at"`
+}

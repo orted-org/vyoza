@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS uptime_conclusion (
     avg_warning_resp_time INTEGER NOT NULL,
     start_date TIMESTAMP,
     end_date TIMESTAMP
-)
+);
 
 CREATE TABLE IF NOT EXISTS uptime_ssl_info (
     uwr_id INTEGER UNIQUE REFERENCES uptime_watch_request(id),
