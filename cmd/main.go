@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	db "github.com/orted-org/vyoza/db/dao"
@@ -29,4 +30,11 @@ func main() {
 	r := chi.NewRouter()
 	initHandler(app, r)
 
+	// TODO: server handling
+	srv := http.Server{
+		Addr:    "localhost:5000",
+		Handler: r,
+	}
+
+	log.Fatal(srv.ListenAndServe())
 }

@@ -25,7 +25,7 @@ func getBody(r *http.Request, v interface{}) error {
 }
 
 type httpResp struct {
-	Status  string      `json:"status"`
+	Status  int         `json:"status"`
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 }
@@ -33,7 +33,7 @@ type httpResp struct {
 func sendResponse(rw http.ResponseWriter, status int, data interface{}, message string) {
 	rw.Header().Set("Content-Type", "application/json; charset=utf-8")
 	rw.WriteHeader(status)
-	out, err := json.Marshal(httpResp{Status: "success", Data: data, Message: message})
+	out, err := json.Marshal(httpResp{Status: status, Data: data, Message: message})
 	if err != nil {
 		sendErrorResponse(rw, http.StatusInternalServerError, nil, "Internal Server Error")
 		return
@@ -44,7 +44,7 @@ func sendResponse(rw http.ResponseWriter, status int, data interface{}, message 
 func sendErrorResponse(rw http.ResponseWriter, status int, data interface{}, message string) {
 	rw.Header().Set("Content-Type", "application/json; charset=utf-8")
 	rw.WriteHeader(status)
-	out, _ := json.Marshal(httpResp{Status: "error",
+	out, _ := json.Marshal(httpResp{Status: status,
 		Message: message,
 		Data:    data})
 
