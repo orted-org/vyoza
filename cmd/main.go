@@ -25,6 +25,7 @@ type App struct {
 	// channel for os signals
 	osSignal chan os.Signal
 
+	// http server
 	srv *http.Server
 }
 
@@ -46,6 +47,7 @@ func main() {
 		logger:   lo,
 	}
 
+	initServer(app)
 	go initWatcher(app)
 	go initCleaner(app)
 
