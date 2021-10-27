@@ -38,7 +38,7 @@ type UptimeWatchRequest struct {
 	HookLevel             int       `json:"hook_level"`
 	HookAddress           string    `json:"hook_address"`
 	NotificationEmail     string    `json:"notification_email"`
-	HookSecret            string    `json:"hook_secret,omitempty"`
+	HookSecret            string    `json:"-"`
 }
 
 type UptimeResult struct {
