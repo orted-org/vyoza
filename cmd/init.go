@@ -24,6 +24,9 @@ func initCleaner(app *App) {
 			v <- struct{}{}
 		}
 
+		app.logger.Println("closing db connection")
+		app.store.Close()
+		
 		// waiting to gracefully shutdown all the processes
 		app.logger.Println("quitting application in 3s")
 		time.Sleep(time.Second * 3)
