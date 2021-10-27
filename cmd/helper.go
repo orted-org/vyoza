@@ -19,7 +19,7 @@ func getBody(r *http.Request, v interface{}) error {
 	}
 	err = json.Unmarshal(body, v)
 	if err != nil {
-		return ErrCouldNotReadBody
+		return ErrCouldNotParseBody
 	}
 	return nil
 }

@@ -13,7 +13,7 @@ func (app *App) handleCreateWatchReq(rw http.ResponseWriter, r *http.Request) {
 	var arg db.AddUptimeWatchRequestParams
 	err := getBody(r, &arg)
 	if err != nil {
-		sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
+		sendErrorResponse(rw, http.StatusBadGateway, nil, err.Error())
 		return
 	}
 	i, err := app.store.AddUptimeWatchRequest(r.Context(), arg)
@@ -24,7 +24,31 @@ func (app *App) handleCreateWatchReq(rw http.ResponseWriter, r *http.Request) {
 	sendResponse(rw, http.StatusCreated, i, "created uptime watch request")
 }
 func (app *App) handleUpdateWatchReq(rw http.ResponseWriter, r *http.Request) {
-
+	var updatingData map[string]interface{}
+	err := getBody(r, &updatingData)
+	if err != nil {
+		sendErrorResponse(rw, http.StatusBadGateway, nil, err.Error())
+		return
+	}
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		sendErrorResponse(rw, http.StatusBadRequest, nil, "key not found in request")
+	}
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		sendErrorResponse(rw, http.StatusBadRequest, nil, "invalid id")
+		return
+	}
+	i, err := app.store.UpdateUptimeWatchRequestById(r.Context(), updatingData, intId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			sendErrorResponse(rw, http.StatusNotFound, nil, "watch request with given id not found")
+		} else {
+			sendErrorResponse(rw, http.StatusInternalServerError, nil, "internal server error")
+		}
+		return
+	}
+	sendResponse(rw, http.StatusOK, i, "")
 }
 func (app *App) handleGetWatchReq(rw http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
