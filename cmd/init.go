@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"database/sql"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	_ "github.com/mattn/go-sqlite3"
 	db "github.com/orted-org/vyoza/db/dao"
 )
@@ -26,11 +28,16 @@ func initCleaner(app *App) {
 
 		app.logger.Println("closing db connection")
 		app.store.Close()
-		
+
 		// waiting to gracefully shutdown all the processes
 		app.logger.Println("quitting application in 3s")
 		time.Sleep(time.Second * 3)
-		os.Exit(0)
+
+		// finally shutting down the server
+		app.logger.Println("shutting down the http server")
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
+		app.srv.Shutdown(ctx)
 	}()
 }
 
@@ -51,6 +58,17 @@ func initDB() (db.Store, error) {
 	return q, nil
 }
 
+func initServer(app *App) {
+	r := chi.NewRouter()
+	initHandler(app, r)
+
+	// TODO: send address from config file
+	srv := http.Server{
+		Addr:    "localhost:4000",
+		Handler: r,
+	}
+	app.srv = &srv
+}
 func initWatcher(app *App) {
 
 	// adding a quitter for uptime request watcher

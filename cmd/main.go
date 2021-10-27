@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/go-chi/chi/v5"
 	db "github.com/orted-org/vyoza/db/dao"
 	"github.com/orted-org/vyoza/internal/watcher"
 )
@@ -23,7 +22,10 @@ type App struct {
 	// service quitter signal channel map
 	quitters map[string]chan struct{}
 
+	// channel for os signals
 	osSignal chan os.Signal
+
+	srv *http.Server
 }
 
 var (
@@ -44,16 +46,8 @@ func main() {
 		logger:   lo,
 	}
 
-	r := chi.NewRouter()
-	initHandler(app, r)
 	go initWatcher(app)
 	go initCleaner(app)
 
-	// TODO: server handling
-	srv := http.Server{
-		Addr:    "localhost:4000",
-		Handler: r,
-	}
-
-	log.Fatal(srv.ListenAndServe())
+	log.Fatal(app.srv.ListenAndServe())
 }
