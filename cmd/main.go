@@ -46,7 +46,8 @@ func main() {
 
 	r := chi.NewRouter()
 	initHandler(app, r)
-	initWatcher(app)
+	go initWatcher(app)
+	go initCleaner(app)
 
 	// TODO: server handling
 	srv := http.Server{
