@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -30,7 +31,7 @@ func (app *App) handleGetWatchReq(rw http.ResponseWriter, r *http.Request) {
 		//send all the watch req
 		i, err := app.store.GetAllUptimeWatchRequest(r.Context())
 		if err != nil {
-			sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
+			sendErrorResponse(rw, http.StatusInternalServerError, nil, "internal server error")
 			return
 		}
 		sendResponse(rw, http.StatusOK, i, "")
@@ -43,7 +44,11 @@ func (app *App) handleGetWatchReq(rw http.ResponseWriter, r *http.Request) {
 	}
 	i, err := app.store.GetUptimeWatchRequestByID(r.Context(), intId)
 	if err != nil {
-		sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
+		if err == sql.ErrNoRows {
+			sendErrorResponse(rw, http.StatusNotFound, nil, "watch request with given id not found")
+		} else {
+			sendErrorResponse(rw, http.StatusInternalServerError, nil, "internal server error")
+		}
 		return
 	}
 	sendResponse(rw, http.StatusOK, i, "")
