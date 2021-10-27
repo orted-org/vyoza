@@ -32,7 +32,7 @@ func main() {
 
 	// TODO: server handling
 	srv := http.Server{
-		Addr:    "localhost:5000",
+		Addr:    "localhost:4000",
 		Handler: r,
 	}
 
