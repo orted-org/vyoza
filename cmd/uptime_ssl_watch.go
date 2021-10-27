@@ -18,7 +18,8 @@ func (app *App) handleCreateWatchReq(rw http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
 		return
 	}
-	sendResponse(rw, http.StatusCreated, i, "added to uptime watch request")
+	i.HookSecret = ""
+	sendResponse(rw, http.StatusCreated, i, "created uptime watch request")
 }
 func (app *App) handleUpdateWatchReq(rw http.ResponseWriter, r *http.Request) {
 
