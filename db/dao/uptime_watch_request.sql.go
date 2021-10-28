@@ -47,22 +47,22 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type AddUptimeWatchRequestParams struct {
-	Title                 string
-	Description           string
-	Location              string
-	Enabled               bool
-	Interval              int
-	SSLMonitor            bool
-	SSLInterval           int
-	SSLExpiryNotification int
-	ExpectedStatus        int
-	StdResponseTime       int
-	MaxResponseTime       int
-	RetainDuration        int
-	HookLevel             int
-	HookAddress           string
-	HookSecret            string
-	NotificationEmail     string
+	Title                 string `json:"title"`
+	Description           string `json:"description"`
+	Location              string `json:"location"`
+	Enabled               bool   `json:"enabled"`
+	Interval              int    `json:"interval"`
+	SSLMonitor            bool   `json:"ssl_monitor"`
+	SSLInterval           int    `json:"ssl_interval"`
+	SSLExpiryNotification int    `json:"ssl_expiry_notification"`
+	ExpectedStatus        int    `json:"expected_status"`
+	StdResponseTime       int    `json:"std_response_time"`
+	MaxResponseTime       int    `json:"max_response_time"`
+	RetainDuration        int    `json:"retain_duration"`
+	HookLevel             int    `json:"hook_level"`
+	HookAddress           string `json:"hook_address"`
+	HookSecret            string `json:"hook_secret"`
+	NotificationEmail     string `json:"notification_email"`
 }
 
 func (q *Queries) AddUptimeWatchRequest(ctx context.Context, arg AddUptimeWatchRequestParams) (UptimeWatchRequest, error) {

@@ -14,6 +14,7 @@ var (
 
 func getBody(r *http.Request, v interface{}) error {
 	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
 	if err != nil {
 		return ErrCouldNotReadBody
 	}
