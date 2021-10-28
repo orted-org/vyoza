@@ -11,6 +11,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	is "github.com/go-ozzo/ozzo-validation/v4/is"
 	db "github.com/orted-org/vyoza/db/dao"
+	"github.com/orted-org/vyoza/internal/watcher"
 	"github.com/orted-org/vyoza/util"
 )
 
@@ -41,6 +42,25 @@ func (app *App) handleCreateWatchReq(rw http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
 		return
 	}
+
+	// registering the watcher if enabled
+	if i.Enabled {
+		app.watcher.Register(watcher.WatcherParams{
+			ID:              i.ID,
+			Location:        i.Location,
+			Interval:        i.Interval,
+			ExpectedStatus:  i.ExpectedStatus,
+			MaxResponseTime: i.MaxResponseTime,
+		})
+	}
+	if i.SSLMonitor {
+		app.watcher.RegisterSSL(watcher.SSLWatcherParams{
+			ID:       i.ID,
+			Location: i.Location,
+			Interval: i.SSLInterval,
+		})
+	}
+
 	sendResponse(rw, http.StatusCreated, i, "created uptime watch request")
 }
 
@@ -102,6 +122,24 @@ func (app *App) handleUpdateWatchReq(rw http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	// registering the watcher if enabled
+	if i.Enabled {
+		app.watcher.Register(watcher.WatcherParams{
+			ID:              i.ID,
+			Location:        i.Location,
+			Interval:        i.Interval,
+			ExpectedStatus:  i.ExpectedStatus,
+			MaxResponseTime: i.MaxResponseTime,
+		})
+	}
+	if i.SSLMonitor {
+		app.watcher.RegisterSSL(watcher.SSLWatcherParams{
+			ID:       i.ID,
+			Location: i.Location,
+			Interval: i.SSLInterval,
+		})
+	}
 	sendResponse(rw, http.StatusOK, i, "")
 }
 func (app *App) handleGetWatchReq(rw http.ResponseWriter, r *http.Request) {
@@ -147,6 +185,10 @@ func (app *App) handleDeleteWatchReq(rw http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(rw, http.StatusInternalServerError, nil, "internal server error")
 		return
 	}
+
+	// un registering the watcher
+	app.watcher.UnRegsiter(intId)
+	app.watcher.UnRegsiterSSL(intId)
 	sendResponse(rw, http.StatusOK, nil, "deleted watch request with id "+id)
 }
 
