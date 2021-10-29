@@ -289,6 +289,8 @@ type Queries struct {
 }
 
 type Store interface {
+	Close() error
+
 	// keyvalue
 	AddKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error)
 	UpdateKeyValue(ctx context.Context, arg KeyValue) (KeyValue, error)

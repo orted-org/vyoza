@@ -8,54 +8,64 @@ type KeyValue struct {
 	UpdateAt time.Time `json:"updated_at"`
 }
 
-/*
-	Location -> URL of the service
-	Enabled -> whether watch is enabled
-	EnableUpdatedAt -> timestamp of change in value of enabled
-	Interval -> watch time interval(in seconds)
-	ExpectedStatus -> expected status code for the service to return
-	MaxResponeTime -> if status code matched and within this time, then considered success, otherwise warning
-	RetainDuration -> duration to retain the data in db (1h, 3d, etc)
-	HookLevel -> to make hook HTTP request at event 1(for only error), 2(for error and warning), 3(for success, warning and error)
-	HookAddress -> URL to make post hook request
-	HookSecret -> secret to send to the hook call to make safe hook call
-*/
 type UptimeWatchRequest struct {
-	ID                    int       `json:"id"`
-	Title                 string    `json:"title"`
-	Description           string    `json:"description"`
-	Location              string    `json:"location"`
-	Enabled               bool      `json:"enabled"`
-	EnableUpdatedAt       time.Time `json:"enable_updated_at"`
-	Interval              int       `json:"interval"`
-	SSLMonitor            bool      `json:"ssl_monitor"`
-	SSLInterval           int       `json:"ssl_interval"`
-	SSLExpiryNotification int       `json:"ssl_expiry_notification"`
-	ExpectedStatus        int       `json:"expected_status"`
-	StdResponseTime       int       `json:"std_response_time"`
-	MaxResponseTime       int       `json:"max_response_time"`
-	RetainDuration        int       `json:"retain_duration"`
-	HookLevel             int       `json:"hook_level"`
-	HookAddress           string    `json:"hook_address"`
-	NotificationEmail     string    `json:"notification_email"`
-	HookSecret            string
+	ID              int       `json:"id"`
+	Title           string    `json:"title"`
+	Description     string    `json:"description"`
+	Location        string    `json:"location"`
+	Enabled         bool      `json:"enabled"`
+	EnableUpdatedAt time.Time `json:"enable_updated_at"`
+
+	// in seconds
+	Interval   int  `json:"interval"`
+	SSLMonitor bool `json:"ssl_monitor"`
+
+	// in seconds
+	SSLInterval int `json:"ssl_interval"`
+
+	// in hours
+	SSLExpiryNotification int `json:"ssl_expiry_notification"`
+	ExpectedStatus        int `json:"expected_status"`
+
+	// in milliseconds
+	StdResponseTime int `json:"std_response_time"`
+
+	// in milliseconds
+	MaxResponseTime int `json:"max_response_time"`
+
+	// in hours
+	RetainDuration    int    `json:"retain_duration"`
+	HookLevel         int    `json:"hook_level"`
+	HookAddress       string `json:"hook_address"`
+	NotificationEmail string `json:"notification_email"`
+	HookSecret        string `json:"-"`
 }
 
 type UptimeResult struct {
-	UWRID        int       `json:"uwr_id"`
+	UWRID int `json:"uwr_id"`
+
+	// in milliseconds
 	ResponseTime int       `json:"response_time"`
 	Remark       string    `json:"remark"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 
 type UptimeResultStats struct {
-	UWRID                  int       `json:"uwr_id"`
-	SuccessCount           int       `json:"success_count"`
-	WarningCount           int       `json:"warning_count"`
-	ErrorCount             int       `json:"error_count"`
-	MinResponseTime        int       `json:"min_response_time"`
-	MaxResponseTime        int       `json:"max_response_time"`
-	AvgSuccessResponseTime int       `json:"avg_success_resp_time"`
+	UWRID        int `json:"uwr_id"`
+	SuccessCount int `json:"success_count"`
+	WarningCount int `json:"warning_count"`
+	ErrorCount   int `json:"error_count"`
+
+	// in milliseconds
+	MinResponseTime int `json:"min_response_time"`
+
+	// in milliseconds
+	MaxResponseTime int `json:"max_response_time"`
+
+	// in milliseconds
+	AvgSuccessResponseTime int `json:"avg_success_resp_time"`
+
+	// in milliseconds
 	AvgWarningResponseTime int       `json:"avg_warning_resp_time"`
 	StartDate              time.Time `json:"start_date"`
 	EndDate                time.Time `json:"end_date"`
