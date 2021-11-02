@@ -46,7 +46,7 @@ func initDB() (db.Store, error) {
 	var err error
 
 	// TODO: pass db info from config
-	tDB, err := sql.Open("sqlite3", "../db.db")
+	tDB, err := sql.Open("sqlite3", "../../db.db")
 	if err != nil {
 		return nil, err
 	}
