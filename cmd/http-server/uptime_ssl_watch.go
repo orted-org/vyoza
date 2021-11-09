@@ -43,6 +43,15 @@ func (app *App) handleCreateWatchReq(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, err = app.store.AddUptimeSSLInfo(r.Context(), db.UptimeSSLInfo{
+		UWRID: i.ID,
+	})
+	if err != nil {
+		app.store.DeleteUptimeWatchRequestById(r.Context(), i.ID)
+		sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
+		return
+	}
+
 	// registering the watcher if enabled
 	if i.Enabled {
 		app.watcher.Register(watcher.WatcherParams{
@@ -185,6 +194,7 @@ func (app *App) handleDeleteWatchReq(rw http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(rw, http.StatusInternalServerError, nil, "internal server error")
 		return
 	}
+	app.store.DeleteUptimeSSLInfoByUWRID(r.Context(), intId)
 
 	// un registering the watcher
 	app.watcher.UnRegsiter(intId)
