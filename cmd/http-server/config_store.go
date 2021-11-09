@@ -49,7 +49,7 @@ func (app *App) handleGetConfig(rw http.ResponseWriter, r *http.Request) {
 	}
 	sendResponse(rw, http.StatusOK, i, "")
 }
-func (app *App) handleGetDeleteConfig(rw http.ResponseWriter, r *http.Request) {
+func (app *App) handleDeleteConfig(rw http.ResponseWriter, r *http.Request) {
 	name := chi.URLParam(r, "name")
 	if name == "" {
 		sendErrorResponse(rw, http.StatusBadRequest, nil, "config name not found in request")

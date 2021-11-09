@@ -7,4 +7,9 @@ func initHandler(app *App, r *chi.Mux) {
 	r.Get("/uptime", app.handleGetWatchReq)
 	r.Put("/uptime/{id}", app.handleUpdateWatchReq)
 	r.Delete("/uptime/{id}", app.handleDeleteWatchReq)
+
+	// config store
+	r.Get("/cs/{name}", app.handleGetConfig)
+	r.Post("/cs", app.handleSetConfig)
+	r.Delete("/cs/{name}", app.handleDeleteConfig)
 }
