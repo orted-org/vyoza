@@ -69,11 +69,12 @@ func GetSSLCertificateDetails(url string, timeout int) SSLCertificateDetails {
 		conn, err := tls.Dial("tcp", *url, nil)
 		if err != nil {
 			genRes.Remark = err.Error()
+		} else {
+			genRes.IsValid = true
+			genRes.Remark = conn.ConnectionState().PeerCertificates[0].Issuer.String()
+			genRes.Expiry = conn.ConnectionState().PeerCertificates[0].NotAfter.UTC()
+			conn.Close()
 		}
-		defer conn.Close()
-		genRes.IsValid = true
-		genRes.Remark = conn.ConnectionState().PeerCertificates[0].Issuer.String()
-		genRes.Expiry = conn.ConnectionState().PeerCertificates[0].NotAfter.UTC()
 		result <- genRes
 	}(result, &url)
 	select {

@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	_ "github.com/mattn/go-sqlite3"
 	db "github.com/orted-org/vyoza/db/dao"
+	"github.com/orted-org/vyoza/internal/watcher"
 )
 
 // function to cleanup the open resources
@@ -45,7 +46,7 @@ func initDB() (db.Store, error) {
 	var err error
 
 	// TODO: pass db info from config
-	tDB, err := sql.Open("sqlite3", "../db.db")
+	tDB, err := sql.Open("sqlite3", "../../db.db")
 	if err != nil {
 		return nil, err
 	}
@@ -75,6 +76,31 @@ func initWatcher(app *App) {
 	app.quitters["watcher"] = make(chan struct{})
 
 	app.logger.Println("starting uptime request(ssl) watcher")
+
+	i, err := app.store.GetAllUptimeWatchRequest(context.Background())
+	if err != nil {
+		app.logger.Println("could not get stored uptime watch requests", err.Error())
+	} else {
+		for _, v := range i {
+			if v.Enabled {
+				app.watcher.Register(watcher.WatcherParams{
+					ID:              v.ID,
+					Location:        v.Location,
+					Interval:        v.Interval,
+					ExpectedStatus:  v.ExpectedStatus,
+					MaxResponseTime: v.MaxResponseTime,
+				})
+			}
+			if v.SSLMonitor {
+				app.watcher.RegisterSSL(watcher.SSLWatcherParams{
+					ID:       v.ID,
+					Location: v.Location,
+					Interval: v.SSLInterval,
+				})
+			}
+		}
+	}
+
 	// TODO: add logic to send data to web socket clients
 	for {
 		select {

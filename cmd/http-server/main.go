@@ -48,7 +48,7 @@ func main() {
 	}
 
 	initServer(app)
-	go initWatcher(app)
+	// go initWatcher(app)
 	go initCleaner(app)
 
 	log.Fatal(app.srv.ListenAndServe())
