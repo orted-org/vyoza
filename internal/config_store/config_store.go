@@ -18,21 +18,21 @@ func New(s db.Store) *Config {
 		namespace: "config",
 	}
 }
-func (c *Config) Get(name string) (string, error) {
-	if config, err := c.store.GetKeyValue(context.Background(), c.WithNamespace(name)); err != nil {
+func (c *Config) Get(ctx context.Context, name string) (string, error) {
+	if config, err := c.store.GetKeyValue(ctx, c.WithNamespace(name)); err != nil {
 		return "", err
 	} else {
 		return config.Value, nil
 	}
 }
-func (c *Config) Set(name string, value string) error {
-	_, err := c.store.UpdateKeyValue(context.Background(), db.KeyValue{
+func (c *Config) Set(ctx context.Context, name string, value string) error {
+	_, err := c.store.UpdateKeyValue(ctx, db.KeyValue{
 		Key:   c.WithNamespace(name),
 		Value: value,
 	})
 	if err != nil {
 		if err == sql.ErrNoRows {
-			_, err := c.store.AddKeyValue(context.Background(), db.KeyValue{
+			_, err := c.store.AddKeyValue(ctx, db.KeyValue{
 				Key:   c.WithNamespace(name),
 				Value: value,
 			})
@@ -45,8 +45,8 @@ func (c *Config) Set(name string, value string) error {
 	}
 	return nil
 }
-func (c *Config) Delete(name string) error {
-	return c.store.DeleteKeyValue(context.Background(), c.WithNamespace(name))
+func (c *Config) Delete(ctx context.Context, name string) error {
+	return c.store.DeleteKeyValue(ctx, c.WithNamespace(name))
 }
 func (c *Config) WithNamespace(name string) string {
 	return c.namespace + "." + name
