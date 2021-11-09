@@ -20,7 +20,9 @@ func (app *App) handleSetVault(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
+	//encrpt the value
 	arg.Value = string(util.EncryptText([]byte(arg.Value)))
+
 	// input validation
 	err = validateVaultInp(r.Context(), arg)
 	if err != nil {
@@ -34,6 +36,7 @@ func (app *App) handleSetVault(rw http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
 		return
 	}
+	//decrypt the value
 	arg.Value = string(util.DecryptText([]byte(arg.Value)))
 	sendResponse(rw, http.StatusCreated, arg, "Vault set for "+arg.Key)
 }
@@ -65,7 +68,9 @@ func (app *App) handleUpdateVault(rw http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	//decrypt the value
 	arg.Value = string(util.DecryptText([]byte(arg.Value)))
+
 	sendResponse(rw, http.StatusCreated, arg, "Vault updated for "+arg.Key)
 }
 
@@ -84,7 +89,9 @@ func (app *App) handleGetVault(rw http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	//decrypt the value
 	i = string(util.DecryptText([]byte(i)))
+	
 	sendResponse(rw, http.StatusOK, i, "")
 }
 func (app *App) handleDeleteVault(rw http.ResponseWriter, r *http.Request) {
