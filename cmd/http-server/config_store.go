@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -44,7 +45,11 @@ func (app *App) handleGetConfig(rw http.ResponseWriter, r *http.Request) {
 	}
 	i, err := app.configStore.Get(r.Context(), name)
 	if err != nil {
-		sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
+		if err == sql.ErrNoRows {
+			sendErrorResponse(rw, http.StatusNotFound, nil, "config not found with name "+name)
+		} else {
+			sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
+		}
 		return
 	}
 	sendResponse(rw, http.StatusOK, i, "")
