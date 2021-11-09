@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	_ "github.com/mattn/go-sqlite3"
 	db "github.com/orted-org/vyoza/db/dao"
+	"github.com/orted-org/vyoza/internal/vault"
 	"github.com/orted-org/vyoza/internal/watcher"
 )
 
@@ -122,4 +123,9 @@ func initWatcher(app *App) {
 			app.logger.Println("quitting uptime request(ssl) watcher")
 		}
 	}
+}
+
+
+func initVault(app *App) {
+	app.vault = vault.New(app.store)
 }
