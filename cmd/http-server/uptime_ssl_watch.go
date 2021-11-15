@@ -78,6 +78,7 @@ func (app *App) handleUpdateWatchReq(rw http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if id == "" {
 		sendErrorResponse(rw, http.StatusBadRequest, nil, "key not found in request")
+		return
 	}
 	intId, err := strconv.Atoi(id)
 	if err != nil {
@@ -183,6 +184,7 @@ func (app *App) handleDeleteWatchReq(rw http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if id == "" {
 		sendErrorResponse(rw, http.StatusBadRequest, nil, "key not found in request")
+		return
 	}
 	intId, err := strconv.Atoi(id)
 	if err != nil {
