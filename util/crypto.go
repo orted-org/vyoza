@@ -12,6 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// TODO: take the secret key from env
 const secretKey = "passphrasewhichneedstobe32bytes!"
 
 func NewSHA256(text []byte) []byte {
