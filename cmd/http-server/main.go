@@ -7,6 +7,7 @@ import (
 
 	db "github.com/orted-org/vyoza/db/dao"
 	"github.com/orted-org/vyoza/internal/vault"
+	configstore "github.com/orted-org/vyoza/internal/config_store"
 	"github.com/orted-org/vyoza/internal/watcher"
 )
 
@@ -19,6 +20,9 @@ type App struct {
 
 	// uptime and ssl watcher
 	watcher *watcher.Watcher
+
+	// config store
+	configStore *configstore.Config
 
 	// service quitter signal channel map
 	quitters map[string]chan struct{}
@@ -55,6 +59,7 @@ func main() {
 	// go initWatcher(app)
 
 	initVault(app)
+	initConfigStore(app)
 	go initCleaner(app)
 
 	log.Fatal(app.srv.ListenAndServe())
