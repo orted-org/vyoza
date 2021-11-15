@@ -28,3 +28,13 @@ func TestBcrypt(t *testing.T) {
 	require.Error(t, err)
 	require.EqualError(t, err, bcrypt.ErrMismatchedHashAndPassword.Error())
 }
+
+func TestTextEncryption(t *testing.T) {
+	text := []byte(RandomString(10))
+	e := EncryptText(text)
+	require.NotEmpty(t, e)
+
+	d := DecryptText(e)
+	require.NotEmpty(t, d)
+	require.Equal(t, text, d)
+}
