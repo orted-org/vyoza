@@ -6,6 +6,7 @@ import (
 	"os"
 
 	db "github.com/orted-org/vyoza/db/dao"
+	"github.com/orted-org/vyoza/internal/vault"
 	configstore "github.com/orted-org/vyoza/internal/config_store"
 	"github.com/orted-org/vyoza/internal/watcher"
 )
@@ -31,6 +32,9 @@ type App struct {
 
 	// http server
 	srv *http.Server
+
+	//vault
+	vault *vault.Vault
 }
 
 var (
@@ -53,6 +57,8 @@ func main() {
 
 	initServer(app)
 	// go initWatcher(app)
+
+	initVault(app)
 	initConfigStore(app)
 	go initCleaner(app)
 
