@@ -11,9 +11,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	_ "github.com/mattn/go-sqlite3"
 	db "github.com/orted-org/vyoza/db/dao"
-	"github.com/orted-org/vyoza/internal/vault"
 	configstore "github.com/orted-org/vyoza/internal/config_store"
-	"github.com/orted-org/vyoza/internal/watcher"
+	vault "github.com/orted-org/vyoza/internal/vault"
+	watcher "github.com/orted-org/vyoza/internal/watcher"
 )
 
 // function to cleanup the open resources
@@ -135,4 +135,3 @@ func initVault(app *App) {
 func initConfigStore(app *App) {
 	app.configStore = configstore.New(app.store)
 }
-
