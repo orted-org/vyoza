@@ -57,7 +57,6 @@ func initDB() (db.Store, error) {
 		return nil, err
 	}
 
-	// TODO: closing db connection
 	return q, nil
 }
 
