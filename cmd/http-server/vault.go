@@ -8,7 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	db "github.com/orted-org/vyoza/db/dao"
-	"github.com/orted-org/vyoza/util"
 )
 
 // TODO:register in watcher
@@ -19,9 +18,6 @@ func (app *App) handleSetVault(rw http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(rw, http.StatusBadRequest, nil, err.Error())
 		return
 	}
-	
-	//encrpt the value
-	arg.Value = string(util.EncryptText([]byte(arg.Value)))
 
 	// input validation
 	err = validateVaultInp(r.Context(), arg)
@@ -36,8 +32,7 @@ func (app *App) handleSetVault(rw http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
 		return
 	}
-	//decrypt the value
-	arg.Value = string(util.DecryptText([]byte(arg.Value)))
+
 	sendResponse(rw, http.StatusCreated, arg, "Vault set for "+arg.Key)
 }
 
@@ -56,20 +51,16 @@ func (app *App) handleUpdateVault(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	arg.Value = string(util.EncryptText([]byte(arg.Value)))
-
 	// create in store
 	err = app.vault.Update(r.Context(), arg.Key, arg.Value)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			sendErrorResponse(rw, http.StatusNotFound, nil, "vault not found with name "+ arg.Key)
+			sendErrorResponse(rw, http.StatusNotFound, nil, "vault not found with name "+arg.Key)
 		} else {
 			sendErrorResponse(rw, http.StatusInternalServerError, nil, err.Error())
 		}
 		return
 	}
-	//decrypt the value
-	arg.Value = string(util.DecryptText([]byte(arg.Value)))
 
 	sendResponse(rw, http.StatusCreated, arg, "Vault updated for "+arg.Key)
 }
@@ -89,9 +80,7 @@ func (app *App) handleGetVault(rw http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	//decrypt the value
-	i = string(util.DecryptText([]byte(i)))
-	
+
 	sendResponse(rw, http.StatusOK, i, "")
 }
 func (app *App) handleDeleteVault(rw http.ResponseWriter, r *http.Request) {

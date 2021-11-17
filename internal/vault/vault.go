@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	db "github.com/orted-org/vyoza/db/dao"
+	"github.com/orted-org/vyoza/util"
 )
 
 type Vault struct {
@@ -23,10 +24,14 @@ func (v *Vault) Get(ctx context.Context, name string) (string, error) {
 	if vaultKV, err := v.store.GetKeyValue(ctx, v.WithNamespace(name)); err != nil {
 		return "", err
 	} else {
-		return vaultKV.Value, nil
+		return string(util.DecryptText([]byte(vaultKV.Value))), nil
 	}
 }
 func (v *Vault) Set(ctx context.Context, name string, value string) error {
+
+	// encrypting the secret
+	value = string(util.EncryptText([]byte(value)))
+
 	_, err := v.store.GetKeyValue(ctx, v.WithNamespace(name))
 
 	if err != nil {
@@ -46,6 +51,10 @@ func (v *Vault) Set(ctx context.Context, name string, value string) error {
 	return errors.New("key is not unique")
 }
 func (v *Vault) Update(ctx context.Context, name string, value string) error {
+
+	// encrypting the secret
+	value = string(util.EncryptText([]byte(value)))
+
 	_, err := v.store.UpdateKeyValue(ctx, db.KeyValue{
 		Key:   v.WithNamespace(name),
 		Value: value,
