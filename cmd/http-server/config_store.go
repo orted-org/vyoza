@@ -10,7 +10,6 @@ import (
 	db "github.com/orted-org/vyoza/db/dao"
 )
 
-// TODO: input validation, register in watcher
 func (app *App) handleSetConfig(rw http.ResponseWriter, r *http.Request) {
 	var arg db.KeyValue
 	err := getBody(r, &arg)
@@ -36,7 +35,6 @@ func (app *App) handleSetConfig(rw http.ResponseWriter, r *http.Request) {
 	sendResponse(rw, http.StatusCreated, arg, "config set for "+arg.Key)
 }
 
-// TODO: input validation
 func (app *App) handleGetConfig(rw http.ResponseWriter, r *http.Request) {
 	name := chi.URLParam(r, "name")
 	if name == "" {

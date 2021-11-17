@@ -10,7 +10,6 @@ import (
 	db "github.com/orted-org/vyoza/db/dao"
 )
 
-// TODO:register in watcher
 func (app *App) handleSetVault(rw http.ResponseWriter, r *http.Request) {
 	var arg db.KeyValue
 	err := getBody(r, &arg)

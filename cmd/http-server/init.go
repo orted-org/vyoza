@@ -111,6 +111,33 @@ func initWatcher(app *App) {
 				ResponseTime: data.ResponseTime,
 				Remark:       data.Remark,
 			})
+			details, _ := app.store.GetUptimeWatchRequestByID(context.Background(), data.ID)
+			conc, _ := app.store.GetUptimeResultStatsForID(context.Background(), data.ID)
+
+			if conc.EndDate.Sub(conc.StartDate).Hours() >= float64(details.RetainDuration) {
+				
+				// creating the uptime conclusion
+				var uc db.UptimeConclusion
+				uc.UWRID = conc.UWRID
+				uc.SuccessCount = conc.SuccessCount
+				uc.WarningCount = conc.WarningCount
+				uc.ErrorCount = conc.ErrorCount
+				uc.MinResponseTime = conc.MinResponseTime
+				uc.MaxResponseTime = conc.MaxResponseTime
+				uc.AvgSuccessResponseTime = conc.AvgSuccessResponseTime
+				uc.AvgWarningResponseTime = conc.AvgWarningResponseTime
+				uc.StartDate = conc.StartDate
+				uc.EndDate = conc.EndDate
+
+				// deleting the older conclusion
+				app.store.DeleteUptimeConclusionByUWRID(context.Background(), conc.UWRID)
+
+				// storing the new conclusion
+				app.store.AddUptimeConclusion(context.Background(), uc)
+
+				// deleting the older uptime results
+				app.store.DeleteUptimeResults(context.Background(), uc.UWRID)
+			}
 		case sslData := <-app.watcher.SSLResult:
 			app.store.UpdateUptimeSSLInfoByUWRID(context.Background(), db.UptimeSSLInfo{
 				UWRID:      sslData.ID,
