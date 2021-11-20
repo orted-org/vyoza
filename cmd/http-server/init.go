@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	_ "github.com/mattn/go-sqlite3"
 	db "github.com/orted-org/vyoza/db/dao"
+	authservice "github.com/orted-org/vyoza/internal/auth_service"
 	configstore "github.com/orted-org/vyoza/internal/config_store"
 	vault "github.com/orted-org/vyoza/internal/vault"
 	watcher "github.com/orted-org/vyoza/internal/watcher"
@@ -160,4 +161,9 @@ func initVault(app *App) {
 // config store init
 func initConfigStore(app *App) {
 	app.configStore = configstore.New(app.store)
+}
+
+//auth Service Init
+func initInMemKVStore(app *App) {
+	app.authService = authservice.New(app.inMemKVStore)
 }
