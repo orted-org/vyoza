@@ -1,28 +1,10 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 )
-
-func middlewareOne(next http.Handler) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Executing middlewareOne")
-		x := true
-		if x {
-			w.Write([]byte("auth failed"))
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
-func final(w http.ResponseWriter, r *http.Request) {
-	log.Println("Executing finalHandler")
-	w.Write([]byte("OK"))
-}
 
 func initHandler(app *App, r *chi.Mux) {
   
@@ -43,8 +25,7 @@ func initHandler(app *App, r *chi.Mux) {
 	r.Post("/cs", app.handleSetConfig)
 	r.Delete("/cs/{name}", app.handleDeleteConfig)
 
-
-	//just chscking
-	finalHandler := http.HandlerFunc(final)
-	r.Get("/protected",middlewareOne(finalHandler))
+	// auth service
+	r.Get("/login", app.handleLogin)
+	r.Get("/logout",app.handleCheckAllowance(http.HandlerFunc(app.handleLogout)))
 }
