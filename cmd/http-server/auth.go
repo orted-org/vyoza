@@ -7,6 +7,7 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	authservice "github.com/orted-org/vyoza/internal/auth_service"
+	httperror "github.com/orted-org/vyoza/pkg/http_error"
 )
 
 
@@ -32,7 +33,7 @@ func (app *App) handleLogin(rw http.ResponseWriter, r *http.Request){
 	session, loginErr := app.authService.PerformLogin(sessionId,incBody)
 
 	if loginErr!=nil {
-		xs , _ :=  loginErr.(*authservice.CustomError)
+		xs , _ :=  loginErr.(*httperror.CError)
 		sendErrorResponse(rw, xs.Status, nil, xs.Message)
 		return
 	}
@@ -41,7 +42,7 @@ func (app *App) handleLogin(rw http.ResponseWriter, r *http.Request){
 	http.SetCookie(rw, &http.Cookie{
 		Name:    "_LOC_ID",
 		Value:   session.Id,
-		Expires: time.Now().UTC().Add((authservice.SessionAge+60) * time.Second),
+		Expires: time.Now().UTC().Add(authservice.SessionAge * time.Second),
 		HttpOnly: true,
 	})
 
@@ -62,7 +63,7 @@ func (app *App) handleLogout(rw http.ResponseWriter, r *http.Request){
 		MaxAge: -1,
 		HttpOnly: true,
 	})
-	rw.Write([]byte("SuccessFully Logged Out"))
+	sendResponse(rw, 200, nil, "Successfully logged out")
 }
 
 //CheckAllowance MiddleWare
@@ -78,7 +79,7 @@ func (app *App) handleCheckAllowance(next http.Handler) http.HandlerFunc {
 		session, CAerr :=  app.authService.PerformCheckAllowance(sessionId)
 
 		if CAerr != nil {
-			xs , _ :=  CAerr.(*authservice.CustomError)
+			xs , _ :=  CAerr.(*httperror.CError)
 			sendErrorResponse(rw, xs.Status, nil, xs.Message)
 			return
 		}

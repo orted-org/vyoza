@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	kvstore "github.com/orted-org/vyoza/pkg/kv_store"
+	httperror "github.com/orted-org/vyoza/pkg/http_error"
 )
 type Admin struct {
 	Name string;
@@ -16,9 +17,8 @@ type Admin struct {
 var admins []Admin = []Admin{
 	{Name: "admin1", Password: "pass1", Email: "admin1@gmail.com"},
 }
-
-const SessionAge = 20 //this is in seconds
-
+//session Age in seconds
+const SessionAge = 24*60*60
 
 type AuthService struct {
 	inMemKVStore kvstore.KVStore
@@ -47,13 +47,6 @@ type Session struct {
 }
 
 func (authService *AuthService) PerformLogin(sessionId string, arg LoginArgs) (Session, error) {
-	// var session Session;
-	/*
-	if not, go for loggin in in normal login way
-	if yes, get the session with this session id
-	if any error expect 500, go for normal login way
-	if no error got the session, send the 200 response
-	*/
 	var session Session
 	var err error
 	if sessionId=="" {
@@ -73,8 +66,6 @@ func (authService *AuthService) PerformLogin(sessionId string, arg LoginArgs) (S
 		return session, nil
 	}
 	return session, nil
-
-	
 }
 
 func performNormalLogin(authService *AuthService,arg LoginArgs) (Session, error){
@@ -94,16 +85,27 @@ func performNormalLogin(authService *AuthService,arg LoginArgs) (Session, error)
 	//Set the session inMemKVStore
 	mData, mErr := json.Marshal(session.Data)
 	if mErr!=nil {
-		return session, &CustomError{Status: 500, Message: "internal server error"}
+		return session, &httperror.CError{Status: 500, Message: "internal server error"}
 	}
 	err = authService.inMemKVStore.Set(session.Id, string(mData))
 	if err!=nil {
-		return session, &CustomError{Status: 500, Message: "internal server error"}
+		return session, &httperror.CError{Status: 500, Message: "internal server error"}
 	}
 
 	return session, nil
 }
 
+func (authService *AuthService) PerformCheckAllowance(sessionId string) (Session, error) {
+	session, err := getSession(authService, sessionId)
+	if err!=nil {
+		return session, err
+	}
+	return session, nil
+}
+
+func (authService *AuthService) PerformLogout(sessionId string) {
+	authService.inMemKVStore.Delete(sessionId)
+}
 
 func verifyCredentials(cred LoginArgs) (Admin, error){
 	var admin Admin;
@@ -114,37 +116,7 @@ func verifyCredentials(cred LoginArgs) (Admin, error){
 		}
 	}
 
-	return admin, &CustomError{Status: 401, Message: "Incorrect username or Password"}
-}
-
-func (authService *AuthService) PerformLogout(sessionId string) {
-	authService.inMemKVStore.Delete(sessionId)
-}
-
-type CustomError struct {
-	Status int
-	Message string
-}
-
-func (err *CustomError) Error() string {
-    return err.Message
-}
-
-
-func (authService *AuthService) PerformCheckAllowance(sessionId string) (Session, error) {
-		/*
-		1.  get the sessionId from request
-		2. 	check If there exists a session with that ID
-		3.  if Not return unauthorized
-		4. 	If yes check Session is expired or not
-		5.  if expired unauthorized and delete that session from data
-		6. 	If not request is valid and give access to next middleware
-		*/
-	session, err := getSession(authService, sessionId)
-	if err!=nil {
-		return session, err
-	}
-	return session, nil
+	return admin, &httperror.CError{Status: 401, Message: "Incorrect username or Password"}
 }
 
 func getSession(authService *AuthService, sessionId string) (Session, error) {
@@ -153,12 +125,12 @@ func getSession(authService *AuthService, sessionId string) (Session, error) {
 	str, err := authService.inMemKVStore.Get(sessionId)
 
 	if err!=nil {
-		return session, &CustomError{Status: 401, Message: "Unauthorized"}
+		return session, &httperror.CError{Status: 401, Message: "Unauthorized"}
 	}
 
 	err = json.Unmarshal([]byte(str), &data)
 	if err!=nil {
-		return session, &CustomError{Status: 500, Message: "Internal Server Error"}
+		return session, &httperror.CError{Status: 500, Message: "Internal Server Error"}
 	}
 	session = Session{Id: sessionId, Data: data}
 
@@ -166,7 +138,7 @@ func getSession(authService *AuthService, sessionId string) (Session, error) {
 	if time.Now().UTC().Sub(session.Data.Expires) > 0{
 		//session expired, deleting from inMem
 		authService.inMemKVStore.Delete(sessionId)
-		return session, &CustomError{Status: 500, Message: "Unauthorized"}
+		return session, &httperror.CError{Status: 500, Message: "Unauthorized"}
 	}
 
 	return session, nil
