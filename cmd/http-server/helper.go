@@ -25,8 +25,13 @@ func getBody(r *http.Request, v interface{}) error {
 	return nil
 }
 
-func getCookieId(){
-	
+func getSessionId(r *http.Request)(string, error){
+		cookie, err := r.Cookie("_LOC_ID")
+		if err!=nil {
+			return "", err
+		}
+		sessionId := cookie.Value
+		return sessionId, nil
 }
 
 type httpResp struct {

@@ -10,7 +10,6 @@ import (
 	configstore "github.com/orted-org/vyoza/internal/config_store"
 	"github.com/orted-org/vyoza/internal/vault"
 	"github.com/orted-org/vyoza/internal/watcher"
-	kvstore "github.com/orted-org/vyoza/pkg/kv_store"
 )
 
 type App struct {
@@ -38,9 +37,6 @@ type App struct {
 	//vault
 	vault *vault.Vault
 
-	// in mem db
-	inMemKVStore *kvstore.InMemKVStore
-
 	// authService
 	authService *authservice.AuthService
 }
@@ -61,7 +57,6 @@ func main() {
 		watcher:  watcher.New(),
 		quitters: make(map[string]chan struct{}),
 		logger:   lo,
-		inMemKVStore: kvstore.New(),
 	}
 
 	initServer(app)
@@ -69,7 +64,7 @@ func main() {
 
 	initVault(app)
 	initConfigStore(app)
-	initInMemKVStore(app)
+	initAuthService(app)
 	go initCleaner(app)
 
 	log.Fatal(app.srv.ListenAndServe())

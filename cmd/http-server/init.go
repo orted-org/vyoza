@@ -15,6 +15,7 @@ import (
 	configstore "github.com/orted-org/vyoza/internal/config_store"
 	vault "github.com/orted-org/vyoza/internal/vault"
 	watcher "github.com/orted-org/vyoza/internal/watcher"
+	kvstore "github.com/orted-org/vyoza/pkg/kv_store"
 )
 
 // function to cleanup the open resources
@@ -164,6 +165,6 @@ func initConfigStore(app *App) {
 }
 
 //auth Service Init
-func initInMemKVStore(app *App) {
-	app.authService = authservice.New(app.inMemKVStore)
+func initAuthService(app *App) {
+	app.authService = authservice.New(kvstore.New())
 }

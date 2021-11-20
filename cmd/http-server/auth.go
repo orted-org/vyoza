@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -16,7 +14,6 @@ import (
 func (app *App) handleLogin(rw http.ResponseWriter, r *http.Request){
 	var incBody authservice.LoginArgs;
 	err :=  getBody(r, &incBody)
-	fmt.Printf("incBody is %v", incBody)
 
 	if err != nil {
 		sendErrorResponse(rw, http.StatusBadRequest, nil, err.Error())
@@ -28,40 +25,68 @@ func (app *App) handleLogin(rw http.ResponseWriter, r *http.Request){
 		sendErrorResponse(rw, http.StatusBadRequest, nil, err.Error())
 		return
 	}
+	sessionId, _ := getSessionId(r);
 
-	session, loginErr := app.authService.PerformLogin(incBody)
+
+
+	session, loginErr := app.authService.PerformLogin(sessionId,incBody)
 
 	if loginErr!=nil {
-		if loginErr.Error()=="401" {
-			sendErrorResponse(rw, http.StatusUnauthorized, nil, "incorrect email or password")
-			return
-		}
-		sendErrorResponse(rw, http.StatusInternalServerError, nil, "internal server error")
+		xs , _ :=  loginErr.(*authservice.CustomError)
+		sendErrorResponse(rw, xs.Status, nil, xs.Message)
 		return
 	}
 
 	//set the cookie 
 	http.SetCookie(rw, &http.Cookie{
 		Name:    "_LOC_ID",
-		Value:   session.SessionId,
-		Expires: time.Now().Add(24 * 60 * 60 * time.Second),
+		Value:   session.Id,
+		Expires: time.Now().UTC().Add((authservice.SessionAge+60) * time.Second),
+		HttpOnly: true,
 	})
 
-	sendResponse(rw, http.StatusOK, session, "Logged in successfully")
+	sendResponse(rw, http.StatusOK, session.Data, "Logged in successfully")
 }
 
 func (app *App) handleLogout(rw http.ResponseWriter, r *http.Request){
-	//TODO := Perform Logout
+
+	session, ok := r.Context().Value("session").(authservice.Session)
+	if !ok {
+		sendErrorResponse(rw, 500, nil, "internal server error")
+	}
+
+	app.authService.PerformLogout(session.Id)
+
+	http.SetCookie(rw, &http.Cookie{
+		Name:    "_LOC_ID",
+		MaxAge: -1,
+		HttpOnly: true,
+	})
 	rw.Write([]byte("SuccessFully Logged Out"))
 }
 
 //CheckAllowance MiddleWare
 func (app *App) handleCheckAllowance(next http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		//TODO := CheckAllowance
-		log.Println("Checking Allowances")
 		
-		next.ServeHTTP(rw, r)
+		sessionId, err := getSessionId(r);
+		if err!=nil {
+			//No cookie found
+			sendErrorResponse(rw, http.StatusUnauthorized, nil, "Unauthorized")
+			return
+		}
+		session, CAerr :=  app.authService.PerformCheckAllowance(sessionId)
+
+		if CAerr != nil {
+			xs , _ :=  CAerr.(*authservice.CustomError)
+			sendErrorResponse(rw, xs.Status, nil, xs.Message)
+			return
+		}
+
+		//putting sessionData in request context
+		newCtx := context.WithValue(r.Context(), "session", session)
+
+		next.ServeHTTP(rw, r.WithContext(newCtx))
 	})
 }
 
