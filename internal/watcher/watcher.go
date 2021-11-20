@@ -48,7 +48,11 @@ func New() *Watcher {
 
 // start a performer for a uptime watch
 func (w *Watcher) Register(arg WatcherParams) {
-
+	
+	// check to prevent panic in case the interval is not set
+	if arg.Interval <= 0 {
+		return
+	}
 	// first un-registering, if already registered
 	if w.IfAlreadyRegistered(arg.ID) {
 		w.UnRegsiter(arg.ID)
@@ -64,6 +68,11 @@ func (w *Watcher) Register(arg WatcherParams) {
 
 // start a performer for a ssl watch
 func (w *Watcher) RegisterSSL(arg SSLWatcherParams) {
+
+	// check to prevent panic in case the interval is not set
+	if arg.Interval <= 0 {
+		return
+	}
 	if w.IfSSLAlreadyRegistered(arg.ID) {
 		w.UnRegsiterSSL(arg.ID)
 	}

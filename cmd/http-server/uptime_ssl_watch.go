@@ -15,7 +15,6 @@ import (
 	"github.com/orted-org/vyoza/util"
 )
 
-// TODO: input validation, register in watcher
 func (app *App) handleCreateWatchReq(rw http.ResponseWriter, r *http.Request) {
 	var arg db.AddUptimeWatchRequestParams
 	err := getBody(r, &arg)
@@ -73,7 +72,6 @@ func (app *App) handleCreateWatchReq(rw http.ResponseWriter, r *http.Request) {
 	sendResponse(rw, http.StatusCreated, i, "created uptime watch request")
 }
 
-// TODO: input validation
 func (app *App) handleUpdateWatchReq(rw http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if id == "" {
