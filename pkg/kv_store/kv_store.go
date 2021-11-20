@@ -13,22 +13,22 @@ type KVStore interface {
 	Truncate() error
 }
 type InMemKVStore struct {
-	data map[string]string
+	data map[string]interface{}
 }
 
 func New() *InMemKVStore {
 	return &InMemKVStore{
-		data: make(map[string]string),
+		data: make(map[string]interface{}),
 	}
 }
-func (i *InMemKVStore) Get(key string) (string, error) {
+func (i *InMemKVStore) Get(key string) (interface{}, error) {
 	if value, ok := i.data[key]; ok {
 		return value, nil
 	} else {
 		return "", ErrKeyValueNotExists
 	}
 }
-func (i *InMemKVStore) Set(key, value string) error {
+func (i *InMemKVStore) Set(key string, value interface{}) error {
 	i.data[key] = value
 	return nil
 }
@@ -37,6 +37,6 @@ func (i *InMemKVStore) Delete(key string) error {
 	return nil
 }
 func (i *InMemKVStore) Truncate() error {
-	i.data = make(map[string]string)
+	i.data = make(map[string]interface{})
 	return nil
 }

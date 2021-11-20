@@ -26,6 +26,6 @@ func initHandler(app *App, r *chi.Mux) {
 	r.Delete("/cs/{name}", app.handleDeleteConfig)
 
 	// auth service
-	r.Get("/login", app.handleLogin)
+	r.Post("/login", app.handleLogin)
 	r.Get("/logout",app.handleCheckAllowance(http.HandlerFunc(app.handleLogout)))
 }

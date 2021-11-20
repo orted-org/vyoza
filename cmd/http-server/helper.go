@@ -25,6 +25,10 @@ func getBody(r *http.Request, v interface{}) error {
 	return nil
 }
 
+func getCookieId(){
+	
+}
+
 type httpResp struct {
 	Status  int         `json:"status"`
 	Message string      `json:"message,omitempty"`
