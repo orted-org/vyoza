@@ -10,12 +10,12 @@ import (
 )
 type Admin struct {
 	Name string;
-	Email string;
+	UserName string;
 	Password string
 }
 
 var admins []Admin = []Admin{
-	{Name: "admin1", Password: "pass1", Email: "admin1@gmail.com"},
+	{Name: "admin1", Password: "pass1", UserName: "admin1@gmail.com"},
 }
 //session Age in seconds
 const SessionAge = 24*60*60
@@ -31,7 +31,7 @@ func New(kv kvstore.KVStore) *AuthService {
 }
 
 type LoginArgs struct {
-	Email string `json:"email"`
+	UserName string `json:"user_name"`
 	Password string `json:"password"`
 }
 
@@ -110,7 +110,7 @@ func (authService *AuthService) PerformLogout(sessionId string) {
 func verifyCredentials(cred LoginArgs) (Admin, error){
 	var admin Admin;
 	for i := 0; i < len(admins); i++ {
-		if cred.Email == admins[i].Email&& cred.Password==admins[i].Password {
+		if cred.UserName == admins[i].UserName&& cred.Password==admins[i].Password {
 			admin = admins[i]
 			return admin, nil
 		}

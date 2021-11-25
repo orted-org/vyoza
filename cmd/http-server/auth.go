@@ -95,7 +95,7 @@ func (app *App) handleCheckAllowance(next http.Handler) http.HandlerFunc {
 func validateLoginInp(ctx context.Context, i *authservice.LoginArgs) error {
 	return validation.ValidateStructWithContext(ctx, i,
 
-		validation.Field(&i.Email, validation.Required),
+		validation.Field(&i.UserName, validation.Required),
 		validation.Field(&i.Password, validation.Required),
 	)
 }
