@@ -6,8 +6,9 @@ import (
 	"os"
 
 	db "github.com/orted-org/vyoza/db/dao"
-	"github.com/orted-org/vyoza/internal/vault"
+	authservice "github.com/orted-org/vyoza/internal/auth_service"
 	configstore "github.com/orted-org/vyoza/internal/config_store"
+	"github.com/orted-org/vyoza/internal/vault"
 	"github.com/orted-org/vyoza/internal/watcher"
 )
 
@@ -35,6 +36,9 @@ type App struct {
 
 	//vault
 	vault *vault.Vault
+
+	// authService
+	authService *authservice.AuthService
 }
 
 var (
@@ -60,6 +64,7 @@ func main() {
 
 	initVault(app)
 	initConfigStore(app)
+	initAuthService(app)
 	go initCleaner(app)
 
 	log.Fatal(app.srv.ListenAndServe())

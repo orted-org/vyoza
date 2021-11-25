@@ -1,6 +1,10 @@
 package main
 
-import "github.com/go-chi/chi/v5"
+import (
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+)
 
 func initHandler(app *App, r *chi.Mux) {
   
@@ -21,4 +25,7 @@ func initHandler(app *App, r *chi.Mux) {
 	r.Post("/cs", app.handleSetConfig)
 	r.Delete("/cs/{name}", app.handleDeleteConfig)
 
+	// auth service
+	r.Post("/login", app.handleLogin)
+	r.Get("/logout",app.handleCheckAllowance(http.HandlerFunc(app.handleLogout)))
 }
