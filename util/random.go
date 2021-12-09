@@ -10,9 +10,11 @@ func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
-const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const alphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const numbers = "0123456789"
-const alphaNumeric = numbers + alphabet
+const symbols = `~!@#$%^&*()_-+={[}]|\:;"'<,>.?/`
+const alphaNumeric = numbers + alphabets
+const alphaNumericSymbol = numbers + alphabets + symbols
 
 func RandomInt(min, max int64) int {
 	return int(min + rand.Int63n(max-min+1))
@@ -20,9 +22,9 @@ func RandomInt(min, max int64) int {
 
 func RandomString(size int) string {
 	var sb strings.Builder
-	k := len(alphabet)
+	k := len(alphabets)
 	for i := 0; i < size; i++ {
-		sb.WriteByte(alphabet[rand.Intn(k)])
+		sb.WriteByte(alphabets[rand.Intn(k)])
 	}
 	return sb.String()
 }
@@ -38,9 +40,18 @@ func RandomBool() bool {
 
 func RandomAlphaNumeric(size int) string {
 	var sb strings.Builder
-	k := len(alphabet)
+	k := len(alphaNumeric)
 	for i := 0; i < size; i++ {
 		sb.WriteByte(alphaNumeric[rand.Intn(k)])
+	}
+	return sb.String()
+}
+
+func RandomAlphaNumericSymbolString(size int) string {
+	var sb strings.Builder
+	k := len(alphaNumericSymbol)
+	for i := 0; i < size; i++ {
+		sb.WriteByte(alphaNumericSymbol[rand.Intn(k)])
 	}
 	return sb.String()
 }
