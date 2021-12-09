@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 var (
@@ -25,13 +26,22 @@ func getBody(r *http.Request, v interface{}) error {
 	return nil
 }
 
-func getSessionId(r *http.Request)(string, error){
-		cookie, err := r.Cookie("_LOC_ID")
-		if err!=nil {
-			return "", err
-		}
-		sessionId := cookie.Value
-		return sessionId, nil
+func getCookie(r *http.Request, name string) (string, error) {
+	cookie, err := r.Cookie(name)
+	if err != nil {
+		return "", err
+	}
+	value := cookie.Value
+	return value, nil
+}
+
+func setCookie(rw http.ResponseWriter, expires time.Time, name, value string) {
+	http.SetCookie(rw, &http.Cookie{
+		Name:     name,
+		Value:    value,
+		Expires:  expires,
+		HttpOnly: true,
+	})
 }
 
 type httpResp struct {
