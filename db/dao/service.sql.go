@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 const addService = `
@@ -21,6 +22,7 @@ RETURNING id,
 `
 
 func (q *Queries) AddService(ctx context.Context, arg Service) (Service, error) {
+	arg.CreatedAt = time.Now().UTC()
 	row := q.queryRow(
 		ctx,
 		q.addService,
@@ -47,7 +49,7 @@ DELETE FROM service
 WHERE id = ?;
 `
 
-func (q *Queries) DeleteServiceByID(ctx context.Context, ID int) error {
+func (q *Queries) DeleteServiceByID(ctx context.Context, ID string) error {
 	_, err := q.exec(ctx, q.deleteServiceByID, deleteServiceByID, ID)
 	return err
 }
@@ -62,7 +64,7 @@ FROM service
 WHERE id = ?;
 `
 
-func (q *Queries) GetServiceByID(ctx context.Context, ID int) (Service, error) {
+func (q *Queries) GetServiceByID(ctx context.Context, ID string) (Service, error) {
 	row := q.queryRow(
 		ctx,
 		q.getServiceByID,
