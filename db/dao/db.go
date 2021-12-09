@@ -368,7 +368,7 @@ type Store interface {
 
 	// service
 	AddService(ctx context.Context, arg Service) (Service, error)
-	DeleteServiceByID(ctx context.Context, ID int) error
-	GetServiceByID(ctx context.Context, ID int) (Service, error)
+	DeleteServiceByID(ctx context.Context, ID string) error
+	GetServiceByID(ctx context.Context, ID string) (Service, error)
 	GetAllService(ctx context.Context) ([]Service, error)
 }
