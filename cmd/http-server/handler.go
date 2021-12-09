@@ -7,8 +7,8 @@ import (
 )
 
 func initHandler(app *App, r *chi.Mux) {
-  
-  // uptime
+
+	// uptime
 	r.Post("/uptime", app.handleCreateWatchReq)
 	r.Get("/uptime", app.handleGetWatchReq)
 	r.Put("/uptime/{id}", app.handleUpdateWatchReq)
@@ -26,6 +26,6 @@ func initHandler(app *App, r *chi.Mux) {
 	r.Delete("/cs/{name}", app.handleDeleteConfig)
 
 	// auth service
-	r.Post("/login", app.handleLogin)
-	r.Get("/logout",app.handleCheckAllowance(http.HandlerFunc(app.handleLogout)))
+	r.Post("/auth", app.handleLogin)
+	r.Delete("/auth", app.handleCheckAllowance(http.HandlerFunc(app.handleLogout)))
 }
