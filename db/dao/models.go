@@ -91,3 +91,11 @@ type UptimeSSLInfo struct {
 	Remark     string    `json:"remark"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
+
+type Service struct {
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Secret      string    `json:"secret"`
+	CreatedAt   time.Time `json:"created_at"`
+}
