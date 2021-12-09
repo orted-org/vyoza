@@ -1,145 +1,109 @@
 package authservice
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
 	kvstore "github.com/orted-org/vyoza/pkg/kv_store"
-	httperror "github.com/orted-org/vyoza/pkg/http_error"
 )
-type Admin struct {
-	Name string;
-	UserName string;
-	Password string
+
+// session age in seconds
+const SessionAge = 24 * 60 * 60
+
+var ErrInternalServerError = errors.New("internal server error")
+var ErrUnauthorized = errors.New("unauthorized")
+
+type LoginArgs struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
-var admins []Admin = []Admin{
-	{Name: "admin1", Password: "pass1", UserName: "admin1@gmail.com"},
+type Session struct {
+	ID      string
+	Expires time.Time
 }
-//session Age in seconds
-const SessionAge = 24*60*60
 
 type AuthService struct {
-	inMemKVStore kvstore.KVStore
+	kv kvstore.KVStore
 }
 
 func New(kv kvstore.KVStore) *AuthService {
 	return &AuthService{
-		inMemKVStore: kv,
+		kv: kv,
 	}
 }
 
-type LoginArgs struct {
-	UserName string `json:"user_name"`
-	Password string `json:"password"`
-}
-
-
-type SessionData struct {
-	AdminData Admin
-	Expires time.Time
-}
-
-type Session struct {
-	Id string
-	Data SessionData
-}
-
-func (authService *AuthService) PerformLogin(sessionId string, arg LoginArgs) (Session, error) {
+func (as *AuthService) PerformLogin(ctx context.Context, arg LoginArgs) (Session, error) {
 	var session Session
-	var err error
-	if sessionId=="" {
-		session, err = performNormalLogin(authService, arg)
-		if err!=nil {
-			return session, err
-		}
-		return session, nil
+
+	// getting the username and password for admin from the env
+	username := os.Getenv("ADMIN_USERNAME")
+	password := os.Getenv("ADMIN_PASSWORD")
+
+	// setting the admin's username to default 'admin' if nothing provided in env
+	if username == "" {
+		username = "admin"
 	}
 
-	session, err = getSession(authService, sessionId)
-	if err != nil {
-		session, err = performNormalLogin(authService, arg)
-		if err!=nil {
-			return session, err
-		}
-		return session, nil
-	}
-	return session, nil
-}
-
-func performNormalLogin(authService *AuthService,arg LoginArgs) (Session, error){
-	var session Session;
-	admin, err := verifyCredentials(arg)
-	if err!=nil {
-		return session, err
+	// setting the admin's password to default 'admin' if nothing provided in env
+	if password == "" {
+		password = "admin"
 	}
 
+	// checking if the username and password match
+	if !(username == arg.Username && password == arg.Password) {
+		return Session{}, ErrUnauthorized
+	}
+
+	// creating a session
 	session = Session{
-		Id: uuid.New().String(), 
-		Data: SessionData {
-			AdminData: admin, Expires: time.Now().UTC().Add(SessionAge * time.Second),
-		},
-	}
-	
-	//Set the session inMemKVStore
-	mData, mErr := json.Marshal(session.Data)
-	if mErr!=nil {
-		return session, &httperror.CError{Status: 500, Message: "internal server error"}
-	}
-	err = authService.inMemKVStore.Set(session.Id, string(mData))
-	if err!=nil {
-		return session, &httperror.CError{Status: 500, Message: "internal server error"}
+		ID:      uuid.New().String(),
+		Expires: time.Now().UTC().Add(SessionAge * time.Second),
 	}
 
-	return session, nil
-}
+	// session to store to store in kv store
+	mData, mErr := json.Marshal(session)
+	if mErr != nil {
+		return session, ErrInternalServerError
+	}
 
-func (authService *AuthService) PerformCheckAllowance(sessionId string) (Session, error) {
-	session, err := getSession(authService, sessionId)
-	if err!=nil {
-		return session, err
+	// storing the session in kv store
+	err := as.kv.Set(session.ID, string(mData))
+	if err != nil {
+		return session, ErrInternalServerError
 	}
 	return session, nil
 }
 
-func (authService *AuthService) PerformLogout(sessionId string) {
-	authService.inMemKVStore.Delete(sessionId)
-}
-
-func verifyCredentials(cred LoginArgs) (Admin, error){
-	var admin Admin;
-	for i := 0; i < len(admins); i++ {
-		if cred.UserName == admins[i].UserName&& cred.Password==admins[i].Password {
-			admin = admins[i]
-			return admin, nil
-		}
+func (as *AuthService) IfLogin(sessionId string) (Session, error) {
+	if sessionId == "" {
+		return Session{}, ErrUnauthorized
 	}
 
-	return admin, &httperror.CError{Status: 401, Message: "Incorrect username or Password"}
-}
-
-func getSession(authService *AuthService, sessionId string) (Session, error) {
-	var data SessionData;
 	var session Session
-	str, err := authService.inMemKVStore.Get(sessionId)
+	str, err := as.kv.Get(sessionId)
 
-	if err!=nil {
-		return session, &httperror.CError{Status: 401, Message: "Unauthorized"}
+	if err != nil {
+		return session, ErrUnauthorized
 	}
 
-	err = json.Unmarshal([]byte(str), &data)
-	if err!=nil {
-		return session, &httperror.CError{Status: 500, Message: "Internal Server Error"}
-	}
-	session = Session{Id: sessionId, Data: data}
-
-	
-	if time.Now().UTC().Sub(session.Data.Expires) > 0{
-		//session expired, deleting from inMem
-		authService.inMemKVStore.Delete(sessionId)
-		return session, &httperror.CError{Status: 500, Message: "Unauthorized"}
+	err = json.Unmarshal([]byte(str), &session)
+	if err != nil {
+		return session, ErrInternalServerError
 	}
 
+	if time.Now().UTC().Sub(session.Expires) > 0 {
+		//session expired, deleting from kv store
+		as.kv.Delete(sessionId)
+		return session, ErrUnauthorized
+	}
 	return session, nil
+}
+
+func (as *AuthService) PerformLogout(sessionId string) error {
+	return as.kv.Delete(sessionId)
 }
