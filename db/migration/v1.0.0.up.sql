@@ -48,3 +48,10 @@ CREATE TABLE IF NOT EXISTS uptime_ssl_info (
     remark TEXT NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
+CREATE TABLE IF NOT EXISTS service(
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    secret TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL
+);

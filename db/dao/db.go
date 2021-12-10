@@ -97,6 +97,20 @@ func Prepare(ctx context.Context, db DB) (*Queries, error) {
 		return nil, fmt.Errorf("error preparing query getAllUptimeSSLInfo: %w", err)
 	}
 
+	// service
+	if q.addService, err = db.PrepareContext(ctx, addService); err != nil {
+		return nil, fmt.Errorf("error preparing query addService: %w", err)
+	}
+	if q.deleteServiceByID, err = db.PrepareContext(ctx, deleteServiceByID); err != nil {
+		return nil, fmt.Errorf("error preparing query deleteServiceByID: %w", err)
+	}
+	if q.getServiceByID, err = db.PrepareContext(ctx, getServiceByID); err != nil {
+		return nil, fmt.Errorf("error preparing query getServiceByID: %w", err)
+	}
+	if q.getAllService, err = db.PrepareContext(ctx, getAllService); err != nil {
+		return nil, fmt.Errorf("error preparing query getAllService: %w", err)
+	}
+
 	return &q, nil
 }
 
@@ -196,7 +210,7 @@ func (q *Queries) Close() error {
 		}
 	}
 
-	//uptime ssl info
+	// uptime ssl info
 	if q.addUptimeSSLInfo != nil {
 		if cerr := q.addUptimeSSLInfo.Close(); cerr != nil {
 			err = fmt.Errorf("error closing addUptimeSSLInfo: %w", cerr)
@@ -220,6 +234,28 @@ func (q *Queries) Close() error {
 	if q.getAllUptimeSSLInfo != nil {
 		if cerr := q.getAllUptimeSSLInfo.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getAllUptimeSSLInfo: %w", cerr)
+		}
+	}
+
+	// service
+	if q.addService != nil {
+		if cerr := q.addService.Close(); cerr != nil {
+			err = fmt.Errorf("error closing addService: %w", cerr)
+		}
+	}
+	if q.deleteServiceByID != nil {
+		if cerr := q.deleteServiceByID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteServiceByID: %w", cerr)
+		}
+	}
+	if q.getServiceByID != nil {
+		if cerr := q.getServiceByID.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getServiceByID: %w", cerr)
+		}
+	}
+	if q.getAllService != nil {
+		if cerr := q.getAllService.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getAllService: %w", cerr)
 		}
 	}
 	return err
@@ -286,6 +322,12 @@ type Queries struct {
 	updateUptimeSSLInfoByUWRID *sql.Stmt
 	getUptimeSSLInfoByUWRID    *sql.Stmt
 	getAllUptimeSSLInfo        *sql.Stmt
+
+	// service
+	addService        *sql.Stmt
+	deleteServiceByID *sql.Stmt
+	getServiceByID    *sql.Stmt
+	getAllService     *sql.Stmt
 }
 
 type Store interface {
@@ -323,4 +365,10 @@ type Store interface {
 	UpdateUptimeSSLInfoByUWRID(ctx context.Context, arg UptimeSSLInfo) (UptimeSSLInfo, error)
 	GetUptimeSSLInfoByUWRID(ctx context.Context, UWRID int) (UptimeSSLInfo, error)
 	GetAllUptimeSSLInfo(ctx context.Context, arg getAllUptimeSSLInfoParams) ([]UptimeSSLInfo, error)
+
+	// service
+	AddService(ctx context.Context, arg Service) (Service, error)
+	DeleteServiceByID(ctx context.Context, ID string) error
+	GetServiceByID(ctx context.Context, ID string) (Service, error)
+	GetAllService(ctx context.Context) ([]Service, error)
 }
