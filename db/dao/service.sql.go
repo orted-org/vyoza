@@ -83,16 +83,12 @@ func (q *Queries) GetServiceByID(ctx context.Context, ID string) (Service, error
 }
 
 const getAllService = `
-SELECT
-    uwr_id,
-    is_valid,
-    expiry_date,
-    remark,
-    updated_at
-FROM 
-    uptime_ssl_info
-LIMIT ?
-OFFSET ?;
+SELECT id,
+    name,
+    description,
+    secret,
+    created_at
+FROM service;
 `
 
 func (q *Queries) GetAllService(ctx context.Context) ([]Service, error) {
