@@ -28,7 +28,7 @@ func initHandler(app *App, r *chi.Mux) {
 	// services
 	r.Post("/service", app.handleCheckAllowance(http.HandlerFunc(app.handleCreateService)))
 	r.Delete("/service/{id}", app.handleCheckAllowance(http.HandlerFunc(app.handleDeleteService)))
-	r.Get("/service/{id}", app.handleCheckAllowance(http.HandlerFunc(app.handleGetService)))
+	r.Get("/service", app.handleCheckAllowance(http.HandlerFunc(app.handleGetService)))
 
 	// auth service
 	r.Post("/auth", app.handleLogin)

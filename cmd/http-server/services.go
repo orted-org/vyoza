@@ -62,7 +62,7 @@ func (app *App) handleDeleteService(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) handleGetService(rw http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.URL.Query().Get("id")
 	if id == "" {
 		// send all the services
 		items, err := app.store.GetAllService(r.Context())
