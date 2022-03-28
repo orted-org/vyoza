@@ -5,7 +5,7 @@
     A single binary for service monitoring for latency and SSL certification, vault for secrets and sensitive data, and a config store with small to medium scale workload that can run in tiniest of computers. 
 </p>
 
-#### React (with TS) developers are welcomed for WebUI for this project.
+#### 👋  React (with TS) developers are welcome for WebUI for this project.
 
 #### NOTE : WIP, currently in v0.1.0
 
